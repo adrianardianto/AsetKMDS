@@ -10,17 +10,17 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <h3 className="text-gray-500 text-sm font-medium">Total Aset</h3>
-                    <p className="text-3xl font-bold text-gray-800 mt-2">1,245</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">000</p>
                     <span className="text-green-500 text-sm font-medium mt-1 inline-block">+12% dari bulan lalu</span>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <h3 className="text-gray-500 text-sm font-medium">Aset Dimusnahkan</h3>
-                    <p className="text-3xl font-bold text-gray-800 mt-2">45</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">000</p>
                     <span className="text-green-500 text-sm font-medium mt-1 inline-block">+12% dari bulan lalu</span>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <h3 className="text-gray-500 text-sm font-medium">Total Nilai Aset</h3>
-                    <p className="text-3xl font-bold text-gray-800 mt-2">Rp 1.2M</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">Rp 000</p>
                     <span className="text-gray-400 text-sm font-medium mt-1 inline-block">Estimasi saat ini</span>
                 </div>
             </div>
