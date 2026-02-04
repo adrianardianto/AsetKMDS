@@ -3,7 +3,7 @@ import { Head, useForm } from '@inertiajs/react';
 import MainLayout from '../../Layouts/MainLayout';
 
 export default function Pencatatan() {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         tipe_aset: '',
         jenis_aset: '',
         kode_aset: '',
@@ -19,10 +19,9 @@ export default function Pencatatan() {
         keterangan: '',
     });
     
-    // Check if initial value is custom or standard options
     const standardConditions = ['Bagus', 'Rusak'];
     const [isCustomCondition, setIsCustomCondition] = useState(
-        !standardConditions.includes('Bagus') // Initial value is Bagus, so false
+        !standardConditions.includes('Bagus')
     );
 
     const handleConditionChange = (e) => {
@@ -38,16 +37,26 @@ export default function Pencatatan() {
 
     const handleHargaChange = (e) => {
         let val = e.target.value;
-        // Remove non-numeric chars except for empty string handling
-        const cleanVal = val.replace(/\D/g, '');
+        let cleanVal = val.replace(/[^0-9,]/g, '');
+        const parts = cleanVal.split(',');
         
-        // Format with dots
-        const formattedVal = cleanVal.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        let integerPart = parts[0];
+        let decimalPart = parts.length > 1 ? parts[1].slice(0, 2) : null;
         
-        setData('harga_aset', formattedVal);
+        if (integerPart.length > 1 && integerPart.startsWith('0')) {
+             integerPart = integerPart.replace(/^0+/, '');
+        }
+
+        const formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        
+        let finalVal = formattedInt;
+        if (parts.length > 1) {
+            finalVal += ',' + decimalPart;
+        }
+
+        setData('harga_aset', finalVal);
     };
 
-    // Helper to convert number to Roman Numeral
     const toRoman = (num) => {
         const lookup = {M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1};
         let roman = '';
@@ -60,7 +69,6 @@ export default function Pencatatan() {
         return roman;
     };
 
-    // Helper to map Tipe Aset to Code
     const getTypeCode = (type) => {
         const mapping = {
             'Bangunan 1': 'GDG',
@@ -76,7 +84,6 @@ export default function Pencatatan() {
         return mapping[type] || 'OTH';
     };
 
-    // Auto-generate Kode Aset
     useEffect(() => {
         if (data.tipe_aset) {
             const date = new Date();
@@ -84,8 +91,6 @@ export default function Pencatatan() {
             const month = date.getMonth() + 1;
             const romanMonth = toRoman(month);
             const typeCode = getTypeCode(data.tipe_aset);
-            // Sequence "XXXX" is a placeholder. 
-            // In a real app, you'd fetch the next sequence from the API.
             const sequence = '0001'; 
             
             const generatedCode = `${year}/${romanMonth}/${typeCode}/${sequence}`;
@@ -93,7 +98,6 @@ export default function Pencatatan() {
         }
     }, [data.tipe_aset]);
 
-    // Auto-calculate Umur Aset
     useEffect(() => {
         if (data.tanggal_beli) {
             const beliDate = new Date(data.tanggal_beli);
@@ -103,7 +107,6 @@ export default function Pencatatan() {
             if (m < 0 || (m === 0 && today.getDate() < beliDate.getDate())) {
                 years--;
             }
-            // Ensure age is not negative
             setData('umur_aset', Math.max(0, years));
         }
     }, [data.tanggal_beli]);
@@ -111,8 +114,9 @@ export default function Pencatatan() {
 
     const submit = (e) => {
         e.preventDefault();
-        // post('/pencatatan'); // Placeholder logic
-        console.log('Form submitted', data);
+        post('/pencatatan', {
+            onSuccess: () => alert('Asset successfully recorded!'),
+        });
     };
 
     return (
@@ -131,7 +135,6 @@ export default function Pencatatan() {
                     <form onSubmit={submit} className="p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             
-                            {/* Informasi Dasar Aset */}
                             <div className="space-y-6">
                                 <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-4">Informasi Dasar</h3>
                                 
@@ -157,12 +160,12 @@ export default function Pencatatan() {
                                             value={data.kode_aset}
                                             readOnly
                                             disabled
-                                            placeholder="Terisi Otomatis"
+                                            placeholder="Auto Generate"
                                         />
                                         <InputError message={errors.kode_aset} className="mt-2" />
                                     </div>
                                     <div>
-                                        <FormLabel htmlFor="serial_number" value="Serial Number" required />
+                                        <FormLabel htmlFor="serial_number" value="Serial Number" />
                                         <TextInput 
                                             id="serial_number" 
                                             type="text" 
@@ -231,13 +234,12 @@ export default function Pencatatan() {
                                 </div>
                             </div>
 
-                            {/* Detail & Lokasi */}
                             <div className="space-y-6">
                                 <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-4">Detail & Lokasi</h3>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <FormLabel htmlFor="harga_aset" value="Harga Perolehan (Rp)" required />
+                                        <FormLabel htmlFor="harga_aset" value="Harga Aset (Rp)" required />
                                         <TextInput 
                                             id="harga_aset" 
                                             type="text" 
@@ -271,7 +273,7 @@ export default function Pencatatan() {
                                             value={data.umur_aset}
                                             readOnly
                                             disabled
-                                            placeholder="Terisi Otomatis"
+                                            placeholder="Auto Generate"
                                         />
                                         <InputError message={errors.umur_aset} className="mt-2" />
                                     </div>
@@ -317,7 +319,7 @@ export default function Pencatatan() {
                                         <InputError message={errors.nama_user} className="mt-2" />
                                     </div>
                                     <div>
-                                        <FormLabel htmlFor="lokasi" value="Lokasi Penempatan" required />
+                                        <FormLabel htmlFor="lokasi" value="Lokasi Aset" required />
                                         <SelectInput 
                                             id="lokasi" 
                                             className="mt-1 block w-full"
@@ -352,6 +354,7 @@ export default function Pencatatan() {
                         <div className="flex items-center justify-end mt-8 pt-6 border-t border-slate-100 space-x-4">
                             <button
                                 type="button"
+                                onClick={() => reset()}
                                 className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kmds-gold transition-colors"
                             >
                                 Batal
@@ -413,3 +416,4 @@ function InputError({ message, className = '' }) {
         <p className={'text-sm text-red-600 ' + className}>{message}</p>
     ) : null;
 }
+

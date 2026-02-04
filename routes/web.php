@@ -1,11 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PencatatanController;
 
 Route::get('/', function () {
     return \Inertia\Inertia::render('Dashboard');
 });
 
-Route::get('/pencatatan', function () {
-    return \Inertia\Inertia::render('Pencatatan/Index');
-});
+Route::get('/pencatatan', [PencatatanController::class, 'index'])->name('pencatatan.index');
+Route::post('/pencatatan', [PencatatanController::class, 'store'])->name('pencatatan.store');
