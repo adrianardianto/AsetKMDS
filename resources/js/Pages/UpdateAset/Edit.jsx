@@ -1,27 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, Link } from '@inertiajs/react';
 import MainLayout from '../../Layouts/MainLayout';
 
-export default function Pencatatan() {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        tipe_aset: '',
-        jenis_aset: '',
-        kode_aset: '',
-        serial_number: '',
-        nama_aset: '',
-        harga_aset: '',
-        tanggal_beli: '',
-        umur_aset: '',
-        nama_user: '',
-        kategori_aset: '',
-        lokasi: 'T8',
-        kondisi_aset: 'Bagus',
-        keterangan: '',
+export default function Edit({ aset }) {
+    // Helper to format price from DB (e.g. 1500000.00) to input format (e.g. 1.500.000)
+    const formatPriceInit = (price) => {
+        if (price === null || price === undefined) return '';
+        // Ensure it's a string (e.g. "1500.88" or 1500.88)
+        const priceStr = price.toString();
+        // Split integer and decimal parts (DB uses dot)
+        const parts = priceStr.split('.');
+        
+        const integerPart = parts[0];
+        const decimalPart = parts.length > 1 ? parts[1] : ''; 
+
+        // Add dots to integer part
+        const formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        
+        // Return with comma if decimal exists
+        if (decimalPart) {
+            return `${formattedInt},${decimalPart}`;
+        }
+        return formattedInt;
+    };
+
+    const { data, setData, put, processing, errors } = useForm({
+        tipe_aset: aset.tipe_aset || '',
+        jenis_aset: aset.jenis_aset || '',
+        kode_aset: aset.kode_aset || '',
+        serial_number: aset.serial_number || '',
+        nama_aset: aset.nama_aset || '',
+        harga_aset: formatPriceInit(aset.harga_aset),
+        tanggal_beli: aset.tanggal_beli || '',
+        umur_aset: aset.umur_aset || '',
+        nama_user: aset.nama_user || '',
+        kategori_aset: aset.kategori_aset || '',
+        lokasi: aset.lokasi || 'T8',
+        kondisi_aset: aset.kondisi_aset || 'Bagus',
+        keterangan: aset.keterangan || '',
     });
     
+    // Check if current condition is standard or custom
     const standardConditions = ['Bagus', 'Rusak'];
     const [isCustomCondition, setIsCustomCondition] = useState(
-        !standardConditions.includes('Bagus')
+        !standardConditions.includes(aset.kondisi_aset)
     );
 
     const handleConditionChange = (e) => {
@@ -84,19 +106,20 @@ export default function Pencatatan() {
         return mapping[type] || 'OTH';
     };
 
+    // Note: We avoid auto-generating kode_aset on EDIT unless strictly needed, 
+    // as it might overwrite existing codes if the logic changes. 
+    // However, if the user changes 'Tipe Aset', maybe it SHOULD regenerate? 
+    // For now, let's keep it safe and ONLY update if the user explicitly changes the type significantly or if it was empty.
+    // Actually, usually in edit mode, you don't change the asset code automatically unless requested.
+    // I will comment out the auto-generation for now to prevent accidental overwrites of historic data.
+
+    /*
     useEffect(() => {
         if (data.tipe_aset) {
-            const date = new Date();
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1;
-            const romanMonth = toRoman(month);
-            const typeCode = getTypeCode(data.tipe_aset);
-            const sequence = '0001'; 
-            
-            const generatedCode = `${year}/${romanMonth}/${typeCode}/${sequence}`;
-            setData('kode_aset', generatedCode);
+             // ... generation logic ...
         }
     }, [data.tipe_aset]);
+    */
 
     useEffect(() => {
         if (data.tanggal_beli) {
@@ -114,18 +137,18 @@ export default function Pencatatan() {
 
     const submit = (e) => {
         e.preventDefault();
-        post('/pencatatan');
+        put(`/update-aset/${aset.id}`);
     };
 
     return (
         <MainLayout>
-            <Head title="Pencatatan Aset" />
+            <Head title="Edit Aset" />
 
             <div className="max-w-5xl mx-auto">
                 <div className="flex items-center justify-between mb-8 px-1">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Pencatatan Aset</h1>
-                        <p className="text-sm text-gray-500 mt-1">Lengkapi formulir di bawah untuk mendaftarkan aset baru.</p>
+                        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Edit Aset</h1>
+                        <p className="text-sm text-gray-500 mt-1">Perbarui informasi aset yang sudah terdaftar.</p>
                     </div>
                 </div>
 
@@ -133,7 +156,7 @@ export default function Pencatatan() {
                     <div className="border-b border-gray-100 bg-gray-50/50 px-8 py-4">
                         <div className="flex items-center gap-2">
                             <span className="flex h-2 w-2 rounded-full bg-kmds-gold"></span>
-                            <h3 className="text-sm font-medium text-gray-900">Formulir Input</h3>
+                            <h3 className="text-sm font-medium text-gray-900">Formulir Edit</h3>
                         </div>
                     </div>
                     
@@ -360,26 +383,24 @@ export default function Pencatatan() {
                         </div>
 
                         <div className="flex items-center justify-end px-8 py-4 bg-gray-50 border-t border-gray-100 gap-3">
-                            <button
-                                type="button"
-                                onClick={() => reset()}
+                            <Link
+                                href="/update-aset"
                                 className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-kmds-gold focus:ring-offset-2 transition-all"
                             >
-                                Reset
-                            </button>
+                                Kembali
+                            </Link>
                             <button
                                 type="submit"
                                 disabled={processing}
                                 className="inline-flex justify-center rounded-lg border border-transparent bg-gray-900 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all"
                             >
-                                Simpan Data
+                                Simpan Perubahan
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
         </MainLayout>
-
     );
 }
 
@@ -425,7 +446,6 @@ function InputError({ message, className = '' }) {
         <p className={'text-sm text-red-600 ' + className}>{message}</p>
     ) : null;
 }
-
 
 function SearchableSelect({ options, value, onChange, placeholder, className, id }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -494,6 +514,3 @@ function SearchableSelect({ options, value, onChange, placeholder, className, id
         </div>
     );
 }
-
-
-
