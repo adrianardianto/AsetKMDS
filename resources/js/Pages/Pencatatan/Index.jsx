@@ -57,44 +57,19 @@ export default function Pencatatan() {
         setData('harga_aset', finalVal);
     };
 
-    const toRoman = (num) => {
-        const lookup = {M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1};
-        let roman = '';
-        for (let i in lookup ) {
-            while ( num >= lookup[i] ) {
-                roman += i;
-                num -= lookup[i];
-            }
-        }
-        return roman;
-    };
 
-    const getTypeCode = (type) => {
-        const mapping = {
-            'Bangunan 1': 'GDG',
-            'Bangunan 2': 'GDG',
-            'Kendaraan': 'KEND',
-            'Mesin & Peralatan': 'MSN',
-            'Peralatan Kantor 1': 'IK',
-            'Peralatan Kantor 2': 'IK',
-            'Peralatan Show Room 1': 'IS',
-            'Peralatan Show Room 2': 'IS',
-            'Tanah': 'TNH',
-        };
-        return mapping[type] || 'OTH';
-    };
 
     useEffect(() => {
         if (data.tipe_aset) {
-            const date = new Date();
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1;
-            const romanMonth = toRoman(month);
-            const typeCode = getTypeCode(data.tipe_aset);
-            const sequence = '0001'; 
-            
-            const generatedCode = `${year}/${romanMonth}/${typeCode}/${sequence}`;
-            setData('kode_aset', generatedCode);
+            // Fetch generated code from server
+            fetch(`/pencatatan/generate-kode?tipe_aset=${encodeURIComponent(data.tipe_aset)}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.kode) {
+                        setData('kode_aset', result.kode);
+                    }
+                })
+                .catch(error => console.error('Error generating code:', error));
         }
     }, [data.tipe_aset]);
 
@@ -223,7 +198,7 @@ export default function Pencatatan() {
                             </div>
 
                             <div className="lg:col-span-1">
-                                <FormLabel htmlFor="jenis_aset" value="Divisi / Jenis" required />
+                                <FormLabel htmlFor="jenis_aset" value="Jenis Aset" required />
                                 <SelectInput
                                     id="jenis_aset"
                                     className="mt-1.5 block w-full rounded-lg border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm focus:border-kmds-gold focus:ring-kmds-gold sm:text-sm hover:border-gray-400 transition-colors"

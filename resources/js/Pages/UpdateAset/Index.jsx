@@ -31,13 +31,13 @@ export default function UpdateAset({ asets }) {
                                         Serial Number
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                        Tipe
+                                        Tipe Aset
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                                         Kategori
                                     </th>
                                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                        Jenis
+                                        Jenis Aset
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                                         Lokasi
