@@ -10,11 +10,43 @@ use Inertia\Inertia;
 
 class AsetController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $asets = Aset::latest()->get();
+        $query = Aset::query();
+
+        // Comprehensive Filtering
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_aset', 'like', "%{$search}%")
+                  ->orWhere('kode_aset', 'like', "%{$search}%")
+                  ->orWhere('serial_number', 'like', "%{$search}%")
+                  ->orWhere('nama_user', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('tipe')) {
+            $query->where('tipe_aset', $request->tipe);
+        }
+
+        if ($request->filled('kategori')) {
+            $query->where('kategori_aset', $request->kategori);
+        }
+
+        if ($request->filled('jenis')) {
+            $query->where('jenis_aset', $request->jenis);
+        }
+
+
+        if ($request->filled('kondisi')) {
+            $query->where('kondisi_aset', $request->kondisi);
+        }
+
+        $asets = $query->latest()->get();
+
         return Inertia::render('UpdateAset/Index', [
-            'asets' => $asets
+            'asets' => $asets,
+            'filters' => $request->only(['search', 'tipe', 'kategori', 'jenis', 'kondisi']),
         ]);
     }
 
@@ -46,15 +78,14 @@ class AsetController extends Controller
             'keterangan' => 'nullable|string',
         ]);
 
-        // Remove dots (thousands separator)
+      
         $hargaClean = str_replace('.', '', $request->harga_aset);
-        // Replace comma with dot (decimal separator)
         $hargaClean = str_replace(',', '.', $hargaClean);
         
         $validated['harga_aset'] = $hargaClean;
 
 
-        // Capture original data before update
+       
         $originalData = $aset->getOriginal();
         
         $aset->fill($validated);
@@ -82,7 +113,7 @@ class AsetController extends Controller
                     
                 RiwayatAset::create([
                     'aset_id' => $aset->id,
-                    'user_id' => auth()->id(), // Assuming auth is working
+                    'user_id' => auth()->id(),
                     'action' => 'UPDATE',
                     'changes' => $changes,
                     'description' => 'Memperbarui data: ' . $changedFields,

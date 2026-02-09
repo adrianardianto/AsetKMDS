@@ -13,7 +13,6 @@ export default function MainLayout({ children }) {
     });
     const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-    // Toast Notification State
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState({ type: '', text: '' });
 
@@ -32,7 +31,6 @@ export default function MainLayout({ children }) {
         }
     }, [flash]);
 
-    // Auto-close sidebar on mobile on initial load
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth < 768) {
@@ -42,18 +40,13 @@ export default function MainLayout({ children }) {
             }
         };
 
-        // Set initial state
         handleResize();
 
-        // Optional: Listen to resize if dynamic adaptation is needed
-        // window.addEventListener('resize', handleResize);
-        // return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     return (
         <div className="h-screen bg-slate-50 flex overflow-hidden">
             
-            {/* Toast Notification */}
             <div className={`fixed top-6 right-6 z-[60] transition-all duration-500 transform ${showToast ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0 pointer-events-none'}`}>
                 {toastMessage.text && (
                     <div className={`flex items-start p-4 w-80 bg-white rounded-xl shadow-2xl ring-1 ring-black/5 ${
@@ -102,9 +95,10 @@ export default function MainLayout({ children }) {
                 <nav className="flex-1 mt-6 px-3 space-y-1.5 whitespace-nowrap overflow-y-auto custom-scrollbar">
                     <NavItem href="/" active={url === '/'} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>}>Dashboard</NavItem>
                     <NavItem href="/pencatatan" active={url.startsWith('/pencatatan')} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>}>Pencatatan</NavItem>
-                    <NavGroup label="Pemeliharaan" active={url.startsWith('/update-aset') || url.startsWith('/riwayat-aset')} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>}>
+                    <NavGroup label="Pemeliharaan" active={url.startsWith('/update-aset') || url.startsWith('/riwayat-aset') || url.startsWith('/stock-opname')} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>}>
                         <NavItem href="/update-aset" active={url.startsWith('/update-aset')} className="text-xs">Update Aset</NavItem>
                         <NavItem href="/riwayat-aset" active={url.startsWith('/riwayat-aset')} className="text-xs">Riwayat Aset</NavItem>
+                        <NavItem href="/stock-opname" active={url.startsWith('/stock-opname')} className="text-xs">Stock Opname</NavItem>
                     </NavGroup>
                     <NavGroup label="Pemusnahan" active={url.startsWith('/pemusnahan')} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>}>
                         <NavItem href="#" className="text-xs">Pengajuan Pemusnahan</NavItem>
@@ -119,9 +113,8 @@ export default function MainLayout({ children }) {
             {/* Main Content Wrapper */}
             <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
                 {/* Top Navbar */}
-<header className="bg-white/80 backdrop-blur-md shadow-sm h-16 flex items-center justify-between px- md:px-6 sticky top-0 z-10 w-full border-b-4 border-kmds-gold">
+                <header className="bg-white/80 backdrop-blur-md shadow-sm h-16 flex items-center justify-between px- md:px-6 sticky top-0 z-10 w-full border-b-4 border-kmds-gold">
                     
-                    {/* Toggle Button */}
                     <button 
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                         className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg focus:outline-none transition-all"
@@ -131,7 +124,6 @@ export default function MainLayout({ children }) {
                         </svg>
                     </button>
 
-                    {/* Logo (Visible when sidebar is closed) */}
                     {!isSidebarOpen && (
                         <div className="hidden md:flex items-center ml-4 flex-1 transition-all duration-300">
                              <img src="/images/kmdslogo.png" alt="Logo" className="w-12 h-12 object-contain" />
@@ -141,7 +133,6 @@ export default function MainLayout({ children }) {
                         </div>
                     )}
 
-                    {/* Logo Mobile (Visible if sidebar is closed on mobile) */}
                     <span className="md:hidden flex items-center text-sm font-bold text-kmds-gold ml-2 truncate flex-1">
                         {!isSidebarOpen ? (
                              <>
@@ -151,10 +142,8 @@ export default function MainLayout({ children }) {
                         ) : ''}
                     </span>
 
-                    {/* Right Side: Profile / Utils */}
                     <div className="flex items-center space-x-4 ml-auto flex-shrink-0">
                         <button className="p-2 text-slate-400 hover:text-kmds-gold relative transition-colors">
-                            {/* Notification Icon */}
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
@@ -214,7 +203,6 @@ export default function MainLayout({ children }) {
     );
 }
 
-// Simple Helper Component for Nav Items
 function NavItem({ href, children, active = false, icon, className = '' }) {
     return (
         <Link 
@@ -231,7 +219,6 @@ function NavItem({ href, children, active = false, icon, className = '' }) {
     );
 }
 
-// Helper for Collapsible Nav Groups
 function NavGroup({ label, icon, children, active = false }) {
     const [isOpen, setIsOpen] = useState(active);
 
@@ -258,7 +245,6 @@ function NavGroup({ label, icon, children, active = false }) {
                 </svg>
             </button>
             
-            {/* Smooth collapse using max-height or just conditional rendering for simplicity */}
             {isOpen && (
                 <div className="pl-8 space-y-1 relative before:absolute before:left-6 before:top-0 before:bottom-0 before:w-0.5 before:bg-kmds-gold/30">
                     {children}

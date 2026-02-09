@@ -3,21 +3,16 @@ import { Head, useForm, Link } from '@inertiajs/react';
 import MainLayout from '../../Layouts/MainLayout';
 
 export default function Edit({ aset }) {
-    // Helper to format price from DB (e.g. 1500000.00) to input format (e.g. 1.500.000)
     const formatPriceInit = (price) => {
         if (price === null || price === undefined) return '';
-        // Ensure it's a string (e.g. "1500.88" or 1500.88)
         const priceStr = price.toString();
-        // Split integer and decimal parts (DB uses dot)
         const parts = priceStr.split('.');
         
         const integerPart = parts[0];
         const decimalPart = parts.length > 1 ? parts[1] : ''; 
 
-        // Add dots to integer part
         const formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         
-        // Return with comma if decimal exists
         if (decimalPart) {
             return `${formattedInt},${decimalPart}`;
         }
@@ -40,7 +35,6 @@ export default function Edit({ aset }) {
         keterangan: aset.keterangan || '',
     });
     
-    // Check if current condition is standard or custom
     const standardConditions = ['Bagus', 'Rusak'];
     const [isCustomCondition, setIsCustomCondition] = useState(
         !standardConditions.includes(aset.kondisi_aset)
@@ -106,20 +100,6 @@ export default function Edit({ aset }) {
         return mapping[type] || 'OTH';
     };
 
-    // Note: We avoid auto-generating kode_aset on EDIT unless strictly needed, 
-    // as it might overwrite existing codes if the logic changes. 
-    // However, if the user changes 'Tipe Aset', maybe it SHOULD regenerate? 
-    // For now, let's keep it safe and ONLY update if the user explicitly changes the type significantly or if it was empty.
-    // Actually, usually in edit mode, you don't change the asset code automatically unless requested.
-    // I will comment out the auto-generation for now to prevent accidental overwrites of historic data.
-
-    /*
-    useEffect(() => {
-        if (data.tipe_aset) {
-             // ... generation logic ...
-        }
-    }, [data.tipe_aset]);
-    */
 
     useEffect(() => {
         if (data.tanggal_beli) {
@@ -404,7 +384,6 @@ export default function Edit({ aset }) {
     );
 }
 
-// Simple Components defined here for simplicity, or move to dedicated files
 function FormLabel({ htmlFor, value, children, required = false, className = '' }) {
     return (
         <label htmlFor={htmlFor} className={`block font-medium text-sm text-slate-700 mb-1 ${className}`}>
@@ -466,14 +445,13 @@ function SearchableSelect({ options, value, onChange, placeholder, className, id
     };
 
     const handleBlur = () => {
-        // Delay to allow click event to register
         setTimeout(() => {
             const exactMatch = options.find(opt => opt.toLowerCase() === search.toLowerCase());
             if (exactMatch) {
                 if (exactMatch !== value) onChange(exactMatch);
                 setSearch(exactMatch);
             } else {
-                setSearch(value || ''); // Revert if invalid
+                setSearch(value || '');
             }
             setIsOpen(false);
         }, 200);
@@ -502,7 +480,7 @@ function SearchableSelect({ options, value, onChange, placeholder, className, id
                             key={opt}
                             className="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-slate-50 hover:text-kmds-gold text-gray-900"
                             onMouseDown={(e) => {
-                                e.preventDefault(); // Important: Prevent blur
+                                e.preventDefault();
                                 handleSelect(opt);
                             }}
                          >

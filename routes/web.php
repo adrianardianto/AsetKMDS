@@ -17,3 +17,6 @@ Route::put('/update-aset/{id}', [AsetController::class, 'update'])->name('update
 
 use App\Http\Controllers\RiwayatAsetController;
 Route::get('/riwayat-aset', [RiwayatAsetController::class, 'index'])->name('riwayat-aset.index');
+
+use App\Http\Controllers\StockOpnameController;
+Route::get('/stock-opname', [StockOpnameController::class, 'index'])->name('stock-opname.index');

@@ -13,7 +13,6 @@ class RiwayatAsetController extends Controller
     {
         $query = RiwayatAset::with(['user', 'aset']);
 
-        // Filter by Search (Asset Name/Code, User Name, Description)
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -28,7 +27,6 @@ class RiwayatAsetController extends Controller
             });
         }
 
-        // Filter by Date Range
         if ($request->filled('start_date')) {
             $query->whereDate('created_at', '>=', $request->start_date);
         }
@@ -36,7 +34,6 @@ class RiwayatAsetController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
 
-        // Filter by Action
         if ($request->filled('action')) {
             $query->where('action', $request->action);
         }

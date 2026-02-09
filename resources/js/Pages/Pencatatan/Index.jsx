@@ -358,7 +358,6 @@ export default function Pencatatan() {
     );
 }
 
-// Simple Components defined here for simplicity, or move to dedicated files
 function FormLabel({ htmlFor, value, children, required = false, className = '' }) {
     return (
         <label htmlFor={htmlFor} className={`block font-medium text-sm text-slate-700 mb-1 ${className}`}>
@@ -421,14 +420,13 @@ function SearchableSelect({ options, value, onChange, placeholder, className, id
     };
 
     const handleBlur = () => {
-        // Delay to allow click event to register
         setTimeout(() => {
             const exactMatch = options.find(opt => opt.toLowerCase() === search.toLowerCase());
             if (exactMatch) {
                 if (exactMatch !== value) onChange(exactMatch);
                 setSearch(exactMatch);
             } else {
-                setSearch(value || ''); // Revert if invalid
+                setSearch(value || '');
             }
             setIsOpen(false);
         }, 200);
@@ -457,7 +455,7 @@ function SearchableSelect({ options, value, onChange, placeholder, className, id
                             key={opt}
                             className="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-slate-50 hover:text-kmds-gold text-gray-900"
                             onMouseDown={(e) => {
-                                e.preventDefault(); // Important: Prevent blur
+                                e.preventDefault();
                                 handleSelect(opt);
                             }}
                          >

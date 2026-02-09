@@ -8,17 +8,13 @@ use Inertia\Inertia;
 
 class PencatatanController extends Controller
 {
-    /**
-     * Display the asset recording form.
-     */
+    
     public function index()
     {
         return Inertia::render('Pencatatan/Index');
     }
 
-    /**
-     * Store a newly created asset in storage.
-     */
+ 
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -37,9 +33,7 @@ class PencatatanController extends Controller
             'keterangan' => 'nullable|string',
         ]);
 
-        // Remove dots (thousands separator)
         $hargaClean = str_replace('.', '', $request->harga_aset);
-        // Replace comma with dot (decimal separator)
         $hargaClean = str_replace(',', '.', $hargaClean);
         
         $validated['harga_aset'] = $hargaClean;
@@ -64,13 +58,11 @@ class PencatatanController extends Controller
 
         $prefix = "{$year}/{$month}/{$typeCode}/";
         
-        // Find the last asset code with this prefix
         $lastAset = Aset::where('kode_aset', 'like', "{$prefix}%")
             ->orderBy('id', 'desc')
             ->first();
 
         if ($lastAset) {
-            // Extract the sequence number from the last code
             $lastSequence = (int) substr($lastAset->kode_aset, strrpos($lastAset->kode_aset, '/') + 1);
             $newSequence = str_pad($lastSequence + 1, 4, '0', STR_PAD_LEFT);
         } else {
