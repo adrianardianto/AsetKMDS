@@ -12,6 +12,7 @@ Route::get('/pencatatan/generate-kode', [PencatatanController::class, 'generateK
 
 use App\Http\Controllers\AsetController;
 Route::get('/update-aset', [AsetController::class, 'index'])->name('update-aset.index');
+Route::get('/update-aset/export', [AsetController::class, 'export'])->name('update-aset.export');
 Route::get('/update-aset/{id}/edit', [AsetController::class, 'edit'])->name('update-aset.edit');
 Route::put('/update-aset/{id}', [AsetController::class, 'update'])->name('update-aset.update');
 

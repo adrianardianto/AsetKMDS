@@ -126,4 +126,92 @@ class AsetController extends Controller
 
         return redirect()->route('update-aset.index')->with('success', 'Data aset berhasil diperbarui.');
     }
+    public function export(Request $request)
+    {
+        $query = Aset::query();
+
+        // Comprehensive Filtering
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_aset', 'like', "%{$search}%")
+                  ->orWhere('kode_aset', 'like', "%{$search}%")
+                  ->orWhere('serial_number', 'like', "%{$search}%")
+                  ->orWhere('nama_user', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('tipe')) {
+            $query->where('tipe_aset', $request->tipe);
+        }
+
+        if ($request->filled('kategori')) {
+            $query->where('kategori_aset', $request->kategori);
+        }
+
+        if ($request->filled('jenis')) {
+            $query->where('jenis_aset', $request->jenis);
+        }
+
+
+        if ($request->filled('kondisi')) {
+            $query->where('kondisi_aset', $request->kondisi);
+        }
+
+        $asets = $query->latest()->get();
+
+        $filename = "data_aset_" . date('Y-m-d_H-i-s') . ".csv";
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = [
+            'Kode Aset', 
+            'Nama Aset', 
+            'Serial Number', 
+            'Tipe Aset', 
+            'Kategori', 
+            'Jenis Aset', 
+            'Lokasi', 
+            'User', 
+            'Tanggal Beli', 
+            'Umur (Tahun)', 
+            'Harga', 
+            'Kondisi', 
+            'Keterangan'
+        ];
+
+        $callback = function() use($asets, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($asets as $aset) {
+                $row = [
+                    $aset->kode_aset,
+                    $aset->nama_aset,
+                    $aset->serial_number,
+                    $aset->tipe_aset,
+                    $aset->kategori_aset,
+                    $aset->jenis_aset,
+                    $aset->lokasi,
+                    $aset->nama_user,
+                    $aset->tanggal_beli,
+                    $aset->umur_aset,
+                    $aset->harga_aset,
+                    $aset->kondisi_aset,
+                    $aset->keterangan
+                ];
+                fputcsv($file, $row);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

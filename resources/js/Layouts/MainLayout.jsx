@@ -72,7 +72,7 @@ export default function MainLayout({ children }) {
                 )}
             </div>
             
-            {/* Mobile Overlay Backdrop */}
+            {/* Mobile */}
             {isSidebarOpen && (
                 <div 
                     className="fixed inset-0 bg-black/20 backdrop-blur-sm z-20 md:hidden transition-all"
@@ -85,6 +85,7 @@ export default function MainLayout({ children }) {
                 fixed inset-y-0 left-0 h-full w-64 shadow-2xl md:shadow-none
                 md:relative md:inset-auto md:h-auto md:translate-x-0
                 ${isSidebarOpen ? 'translate-x-0 md:w-64' : '-translate-x-full md:w-0'}
+                print:hidden
                 `}
             >
                 <div className="h-auto py-4 flex flex-col items-center justify-center border-b border-slate-100 whitespace-nowrap px-4 flex-shrink-0">
@@ -110,10 +111,9 @@ export default function MainLayout({ children }) {
                 </nav>
             </aside>
 
-            {/* Main Content Wrapper */}
             <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
                 {/* Top Navbar */}
-                <header className="bg-white/80 backdrop-blur-md shadow-sm h-16 flex items-center justify-between px- md:px-6 sticky top-0 z-10 w-full border-b-4 border-kmds-gold">
+                <header className="bg-white/80 backdrop-blur-md shadow-sm h-16 flex items-center justify-between px-4 md:px-6 sticky top-0 z-10 w-full border-b-4 border-kmds-gold print:hidden">
                     
                     <button 
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -133,16 +133,16 @@ export default function MainLayout({ children }) {
                         </div>
                     )}
 
-                    <span className="md:hidden flex items-center text-sm font-bold text-kmds-gold ml-2 truncate flex-1">
+                    <span className="md:hidden flex items-center text-xs font-bold text-kmds-gold ml-1 tracking-tighter truncate flex-1">
                         {!isSidebarOpen ? (
                              <>
-                                <img src="/images/kmdslogo.png" alt="Logo" className="w-8 h-8 mr-2 object-contain" />
+                                <img src="/images/kmdslogo.png" alt="Logo" className="w-7 h-7 mr-1 object-contain" />
                                 Asset Management
                              </>
                         ) : ''}
                     </span>
 
-                    <div className="flex items-center space-x-4 ml-auto flex-shrink-0">
+                    <div className="flex items-center space-x-2 md:space-x-4 ml-auto flex-shrink-0">
                         <button className="p-2 text-slate-400 hover:text-kmds-gold relative transition-colors">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>

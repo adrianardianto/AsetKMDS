@@ -320,7 +320,7 @@ export default function Pencatatan() {
                                 <InputError message={errors.kondisi_aset} className="mt-1" />
                             </div>
 
-                            <div className="lg:col-span-3">
+                            <div className="md:col-span-2 lg:col-span-3">
                                 <FormLabel htmlFor="keterangan" value="Keterangan" />
                                 <textarea 
                                     id="keterangan" 
@@ -334,18 +334,18 @@ export default function Pencatatan() {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-end px-8 py-4 bg-gray-50 border-t border-gray-100 gap-3">
+                        <div className="flex items-center justify-between px-4 sm:px-8 py-4 bg-gray-50 border-t border-gray-100 gap-3">
                             <button
                                 type="button"
                                 onClick={() => reset()}
-                                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-kmds-gold focus:ring-offset-2 transition-all"
+                                className="flex-none justify-center inline-flex rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-kmds-gold focus:ring-offset-2 transition-all"
                             >
                                 Reset
                             </button>
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="inline-flex justify-center rounded-lg border border-transparent bg-gray-900 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all"
+                                className="flex-1 sm:flex-none inline-flex justify-center rounded-lg border border-transparent bg-gray-900 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all"
                             >
                                 Simpan Data
                             </button>

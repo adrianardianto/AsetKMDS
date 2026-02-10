@@ -8,11 +8,12 @@ export default function RiwayatAset({ riwayat, filters }) {
     // Filter States
     const [search, setSearch] = useState(filters.search || '');
     const [startDate, setStartDate] = useState(filters.start_date || '');
+    const [endDate, setEndDate] = useState(filters.end_date || '');
 
     const handleFilter = () => {
         router.get(
             '/riwayat-aset',
-            { search, start_date: startDate },
+            { search, start_date: startDate, end_date: endDate },
             { preserveState: true, replace: true }
         );
     };
@@ -20,6 +21,7 @@ export default function RiwayatAset({ riwayat, filters }) {
     const handleReset = () => {
         setSearch('');
         setStartDate('');
+        setEndDate('');
         router.get('/riwayat-aset', {}, { preserveState: true, replace: true });
     };
 
@@ -93,12 +95,23 @@ export default function RiwayatAset({ riwayat, filters }) {
                             </svg>
                         </div>
                         
-                        <input
-                            type="date"
-                            className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-kmds-gold focus:border-kmds-gold"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                        />
+                        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+                             <input
+                                type="date"
+                                className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-kmds-gold focus:border-kmds-gold"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                placeholder="Dari Tanggal"
+                            />
+                            <span className="text-gray-400 hidden sm:inline">-</span>
+                            <input
+                                type="date"
+                                className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-kmds-gold focus:border-kmds-gold"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                placeholder="Sampai Tanggal"
+                            />
+                        </div>
 
                         <button 
                             onClick={handleFilter}
@@ -107,7 +120,7 @@ export default function RiwayatAset({ riwayat, filters }) {
                             Filter
                         </button>
                         
-                        {(search || startDate) && (
+                        {(search || startDate || endDate) && (
                             <button 
                                 onClick={handleReset}
                                 className="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
