@@ -20,4 +20,7 @@ use App\Http\Controllers\RiwayatAsetController;
 Route::get('/riwayat-aset', [RiwayatAsetController::class, 'index'])->name('riwayat-aset.index');
 
 use App\Http\Controllers\StockOpnameController;
-Route::get('/stock-opname', [StockOpnameController::class, 'index'])->name('stock-opname.index');
+Route::get('stock-opname/{id}/action', [StockOpnameController::class, 'action'])->name('stock-opname.action');
+Route::post('stock-opname/{id}/complete', [StockOpnameController::class, 'complete'])->name('stock-opname.complete');
+Route::post('stock-opname/record', [StockOpnameController::class, 'updateRecord'])->name('stock-opname.update-record');
+Route::resource('stock-opname', StockOpnameController::class);

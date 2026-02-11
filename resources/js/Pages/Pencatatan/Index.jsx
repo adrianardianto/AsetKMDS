@@ -89,7 +89,9 @@ export default function Pencatatan() {
 
     const submit = (e) => {
         e.preventDefault();
-        post('/pencatatan');
+        post('/pencatatan', {
+            onSuccess: () => reset(),
+        });
     };
 
     return (
