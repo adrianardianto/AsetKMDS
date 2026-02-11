@@ -126,6 +126,22 @@ class AsetController extends Controller
                     'waktu_pengerjaan' => $aset->waktu_pengerjaan,
                 ]);
             }
+            
+            // Sync changes to Active Stock Opname Periods
+            if (isset($changes['kondisi_aset'])) {
+                $newKondisi = $changes['kondisi_aset']['new'];
+                
+                // Find all active periods
+                $activePeriodIds = \App\Models\StockOpnamePeriod::where('status', 'Aktif')->pluck('id');
+                
+                if ($activePeriodIds->isNotEmpty()) {
+                    // Update existing records for this asset in active periods
+                    \App\Models\StockOpnameRecord::whereIn('stock_opname_period_id', $activePeriodIds)
+                        ->where('aset_id', $aset->id)
+                        ->update(['kondisi' => $newKondisi]);
+                }
+            }
+
         } else {
              $aset->save();
         }

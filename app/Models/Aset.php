@@ -26,4 +26,9 @@ class Aset extends Model
     protected $casts = [
         'waktu_pengerjaan' => 'datetime',
     ];
+
+    public function stockOpnameRecords()
+    {
+        return $this->hasMany(StockOpnameRecord::class);
+    }
 }
