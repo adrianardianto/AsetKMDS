@@ -76,14 +76,20 @@ class AsetController extends Controller
             'nama_user' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
+            'waktu_pengerjaan' => 'nullable|date|required_if:use_auto_time,false',
+            'use_auto_time' => 'boolean',
         ]);
-
-      
+        
         $hargaClean = str_replace('.', '', $request->harga_aset);
         $hargaClean = str_replace(',', '.', $hargaClean);
         
         $validated['harga_aset'] = $hargaClean;
 
+        if ($request->boolean('use_auto_time')) {
+             $validated['waktu_pengerjaan'] = now();
+        } else {
+             $validated['waktu_pengerjaan'] = now()->parse($request->waktu_pengerjaan);
+        }
 
        
         $originalData = $aset->getOriginal();
@@ -117,6 +123,7 @@ class AsetController extends Controller
                     'action' => 'UPDATE',
                     'changes' => $changes,
                     'description' => 'Memperbarui data: ' . $changedFields,
+                    'waktu_pengerjaan' => $aset->waktu_pengerjaan,
                 ]);
             }
         } else {

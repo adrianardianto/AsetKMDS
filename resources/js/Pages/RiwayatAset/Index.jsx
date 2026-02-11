@@ -33,11 +33,20 @@ export default function RiwayatAset({ riwayat, filters }) {
         }
     };
 
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleString('id-ID', {
-            dateStyle: 'medium',
-            timeStyle: 'short'
-        });
+    const formatDate = (dateString, isManual = false) => {
+        if (!dateString) return isManual ? '-' : 'Invalid Date';
+        try {
+            return new Date(dateString).toLocaleString('id-ID', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        } catch (e) {
+            return isManual ? '-' : 'Invalid Date';
+        }
     };
 
     const formatChanges = (changes) => {
@@ -54,14 +63,18 @@ export default function RiwayatAset({ riwayat, filters }) {
                     <div key={key} className="grid grid-cols-3 gap-4 text-sm py-2 border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
                         <span className="font-medium text-gray-700 capitalize">{key.replace(/_/g, ' ')}</span>
                         <div className="break-words font-mono text-xs self-start">
-                             <div className="bg-red-50 text-red-600 px-2 py-1 rounded border border-red-100 inline-block">
-                                {value.old !== null && value.old !== '' ? value.old : <span className="italic opacity-70">Null/Kosong</span>}
-                             </div>
+                            <div className="bg-red-50 text-red-600 px-2 py-1 rounded border border-red-100 inline-block">
+                                {value.old !== null && value.old !== '' ? 
+                                    (Date.parse(value.old) && (key.includes('waktu') || key.includes('date') || key.includes('tanggal')) ? formatDate(value.old, true) : value.old) 
+                                    : <span className="italic opacity-70">Null/Kosong</span>}
+                            </div>
                         </div>
                         <div className="break-words font-mono text-xs self-start">
-                             <div className="bg-green-50 text-green-600 px-2 py-1 rounded border border-green-100 inline-block">
-                                {value.new !== null && value.new !== '' ? value.new : <span className="italic opacity-70">Null/Kosong</span>}
-                             </div>
+                            <div className="bg-green-50 text-green-600 px-2 py-1 rounded border border-green-100 inline-block">
+                                {value.new !== null && value.new !== '' ? 
+                                    (Date.parse(value.new) && (key.includes('waktu') || key.includes('date') || key.includes('tanggal')) ? formatDate(value.new, true) : value.new) 
+                                    : <span className="italic opacity-70">Null/Kosong</span>}
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -137,7 +150,10 @@ export default function RiwayatAset({ riwayat, filters }) {
                             <thead className="bg-slate-50">
                                 <tr>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                        Waktu
+                                        Waktu Input
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 yellow-header-highlight uppercase tracking-wider">
+                                        Waktu Pengerjaan
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                                         Aset
@@ -163,6 +179,9 @@ export default function RiwayatAset({ riwayat, filters }) {
                                             <tr className="hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => toggleRow(log.id)}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {formatDate(log.created_at)}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                                                    {log.waktu_pengerjaan ? formatDate(log.waktu_pengerjaan, true) : '-'}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                     {log.aset ? (
@@ -197,7 +216,7 @@ export default function RiwayatAset({ riwayat, filters }) {
                                             </tr>
                                             {expandedRows.includes(log.id) && (
                                                 <tr className="bg-slate-50">
-                                                    <td colSpan="6" className="px-6 py-4">
+                                                    <td colSpan="7" className="px-6 py-4">
                                                         <div className="rounded-lg border border-slate-200 bg-white p-4">
                                                             <div className="mb-4 pb-4 border-b border-gray-100">
                                                                 <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Deskripsi Lengkap</h4>
@@ -215,7 +234,7 @@ export default function RiwayatAset({ riwayat, filters }) {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                                        <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
                                             Belum ada riwayat tercatat.
                                         </td>
                                     </tr>

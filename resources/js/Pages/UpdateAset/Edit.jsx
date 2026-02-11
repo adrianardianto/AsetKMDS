@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Head, useForm, Link } from '@inertiajs/react';
 import MainLayout from '../../Layouts/MainLayout';
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/themes/light.css";
 
 export default function Edit({ aset }) {
     const formatPriceInit = (price) => {
@@ -33,6 +35,8 @@ export default function Edit({ aset }) {
         lokasi: aset.lokasi || 'T8',
         kondisi_aset: aset.kondisi_aset || 'Bagus',
         keterangan: aset.keterangan || '',
+        waktu_pengerjaan: aset.waktu_pengerjaan ? aset.waktu_pengerjaan.slice(0, 16) : '',
+        use_auto_time: !aset.waktu_pengerjaan,
     });
     
     const standardConditions = ['Bagus', 'Rusak'];
@@ -133,6 +137,147 @@ export default function Edit({ aset }) {
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-sm ring-1 ring-gray-200 overflow-hidden">
+                    <style>{`
+                        .flatpickr-calendar {
+                            width: 250px !important;
+                            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+                            border: 1px solid #e5e7eb !important;
+                            border-radius: 0.5rem !important;
+                            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+                            padding: 0.5rem !important;
+                            background: white !important;
+                        }
+                        .flatpickr-months {
+                            padding: 0 !important;
+                            margin-bottom: 0px !important;
+                            position: relative !important;
+                            background: transparent !important;
+                        }
+                        .flatpickr-month {
+                            height: 28px !important;
+                            overflow: visible !important;
+                            background: transparent !important;
+                        }
+                        .flatpickr-current-month {
+                            font-size: 0.85rem !important;
+                            padding: 0 !important;
+                            font-weight: 600 !important;
+                            top: 0 !important;
+                            height: 28px !important;
+                            color: #1f2937 !important;
+                            fill: #1f2937 !important;
+                        }
+                        .flatpickr-current-month .flatpickr-monthDropdown-months {
+                            background: transparent !important;
+                            border: none !important;
+                            padding: 0 !important;
+                            font-weight: 600 !important;
+                        }
+                        .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
+                            background: transparent !important;
+                        }
+                        .flatpickr-current-month input.cur-year {
+                            font-weight: 600 !important;
+                            color: #1f2937 !important;
+                        }
+                        .flatpickr-weekdays {
+                            height: 24px !important;
+                            background: transparent !important;
+                        }
+                        span.flatpickr-weekday {
+                            font-size: 0.7rem !important;
+                            color: #6b7280 !important;
+                            font-weight: 500 !important;
+                            background: transparent !important;
+                        }
+                        .flatpickr-days {
+                            width: 238px !important; /* Fits within 250px padding */
+                            padding: 0 !important;
+                        }
+                        .dayContainer {
+                            width: 238px !important;
+                            min-width: 238px !important;
+                            max-width: 238px !important;
+                            padding: 0 !important;
+                            justify-content: center !important;
+                        }
+                        .flatpickr-day {
+                            height: 26px !important;
+                            line-height: 26px !important;
+                            max-width: 32px !important;
+                            flex-basis: 32px !important;
+                            font-size: 0.75rem !important;
+                            border-radius: 4px !important;
+                            margin: 1px !important;
+                            color: #374151 !important;
+                            border: 1px solid transparent !important;
+                        }
+                        /* Muted dates (outside current month) */
+                        .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
+                            color: #e5e7eb !important;
+                        }
+                        /* Active/Selected State */
+                        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover {
+                            background: #d97706 !important;
+                            border-color: #d97706 !important;
+                            color: white !important;
+                        }
+                        .flatpickr-day:hover {
+                            background: #f3f4f6 !important;
+                            border-color: #e5e7eb !important;
+                        }
+                        .flatpickr-day.today {
+                            border-color: #d97706 !important;
+                        }
+                         /* Time Picker Section - Compact */
+                         .flatpickr-time {
+                             margin-top: 2px !important;
+                             border-top: 1px solid #f3f4f6 !important;
+                             padding-top: 2px !important;
+                             padding-bottom: 2px !important;
+                             max-height: 28px !important;
+                             line-height: 24px !important;
+                         }
+                        .flatpickr-time .numInputWrapper {
+                            height: 22px !important;
+                            width: 36px !important;
+                        }
+                        .flatpickr-time input {
+                            font-size: 0.75rem !important;
+                            height: 22px !important;
+                            background: #f9fafb !important;
+                            border: 1px solid #e5e7eb !important;
+                            border-radius: 4px !important;
+                            color: #1f2937 !important;
+                            padding: 0 !important;
+                        }
+                        .flatpickr-time input:focus {
+                            background: white !important;
+                            border-color: #d97706 !important;
+                        }
+                        .flatpickr-time .flatpickr-time-separator {
+                            color: #9ca3af !important;
+                            font-weight: bold !important;
+                            display: inline-block !important;
+                            height: 22px !important;
+                            line-height: 22px !important;
+                        }
+                        .flatpickr-time .flatpickr-am-pm {
+                            display: none !important;
+                        }
+                        /* Navigation Arrows */
+                        .flatpickr-prev-month, .flatpickr-next-month {
+                            top: 0.25rem !important;
+                            padding: 2px !important;
+                            height: 24px !important;
+                            width: 24px !important;
+                        }
+                        .flatpickr-prev-month svg, .flatpickr-next-month svg {
+                             width: 10px !important;
+                             height: 10px !important;
+                             fill: #6b7280 !important;
+                        }
+                    `}</style>
                     <div className="border-b border-gray-100 bg-gray-50/50 px-8 py-4">
                         <div className="flex items-center gap-2">
                             <span className="flex h-2 w-2 rounded-full bg-kmds-gold"></span>
@@ -348,7 +493,85 @@ export default function Edit({ aset }) {
                                 <InputError message={errors.kondisi_aset} className="mt-1" />
                             </div>
 
-                            <div className="md:col-span-2 lg:col-span-3">
+                            <div className="lg:col-span-1">
+                                <FormLabel htmlFor="waktu_pengerjaan" value="Waktu Pengerjaan" required={!data.use_auto_time} />
+                                <Flatpickr
+                                    id="waktu_pengerjaan"
+                                    className={`mt-1.5 block w-full rounded-lg border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-kmds-gold focus:ring-kmds-gold text-sm hover:border-gray-400 transition-colors ${data.use_auto_time ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'bg-white'}`}
+                                    value={data.waktu_pengerjaan}
+                                    options={{
+                                        enableTime: true,
+                                        dateFormat: "Y-m-d H:i",
+                                        time_24hr: true,
+                                        plugins: [
+                                            (fp) => {
+                                                const footer = document.createElement("div");
+                                                footer.className = "flex justify-between items-center py-1 px-2 border-t border-gray-100 bg-white";
+                                                
+                                                const clearBtn = document.createElement("button");
+                                                clearBtn.type = "button";
+                                                clearBtn.innerText = "Clear";
+                                                clearBtn.className = "text-xs font-medium text-slate-500 hover:text-red-600 focus:outline-none transition-colors";
+                                                clearBtn.addEventListener("click", () => {
+                                                    fp.clear();
+                                                    fp.close();
+                                                });
+                                                
+                                                const todayBtn = document.createElement("button");
+                                                todayBtn.type = "button";
+                                                todayBtn.innerText = "Today";
+                                                todayBtn.className = "text-xs font-medium text-kmds-gold hover:text-yellow-600 focus:outline-none transition-colors";
+                                                todayBtn.addEventListener("click", () => {
+                                                    fp.setDate(new Date(), true); 
+                                                });
+                                                
+                                                footer.appendChild(clearBtn);
+                                                footer.appendChild(todayBtn);
+                                                
+                                                return {
+                                                    onReady: () => {
+                                                        fp.calendarContainer.appendChild(footer);
+                                                    }
+                                                };
+                                            }
+                                        ]
+                                    }}
+                                    onChange={([date]) => {
+                                        if (date) {
+                                            const offsetValidDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+                                            const isoString = offsetValidDate.toISOString().slice(0, 16);
+                                            setData('waktu_pengerjaan', isoString);
+                                        } else {
+                                            setData('waktu_pengerjaan', '');
+                                        }
+                                    }}
+                                    disabled={data.use_auto_time}
+                                    placeholder={data.use_auto_time ? "Otomatis (Saat Ini)" : "Pilih Waktu..."}
+                                />
+                                
+                                <div className="mt-2 flex items-center">
+                                    <input
+                                        id="use_auto_time"
+                                        type="checkbox"
+                                        className="h-4 w-4 text-kmds-gold focus:ring-kmds-gold border-gray-300 rounded cursor-pointer"
+                                        checked={data.use_auto_time}
+                                        onChange={(e) => {
+                                            const isChecked = e.target.checked;
+                                            setData(data => ({
+                                                ...data,
+                                                use_auto_time: isChecked,
+                                                waktu_pengerjaan: isChecked ? '' : data.waktu_pengerjaan
+                                            }));
+                                        }}
+                                    />
+                                    <label htmlFor="use_auto_time" className="ml-2 block text-xs text-gray-500 cursor-pointer select-none">
+                                        Gunakan Waktu Otomatis
+                                    </label>
+                                </div>
+                                <InputError message={errors.waktu_pengerjaan} className="mt-1" />
+                            </div>
+
+                            <div className="md:col-span-1 lg:col-span-2">
                                 <FormLabel htmlFor="keterangan" value="Keterangan" />
                                 <textarea 
                                     id="keterangan" 

@@ -12,10 +12,12 @@ class RiwayatAset extends Model
         'action',
         'changes',
         'description',
+        'waktu_pengerjaan',
     ];
 
     protected $casts = [
         'changes' => 'array',
+        'waktu_pengerjaan' => 'datetime',
     ];
 
     public function user()

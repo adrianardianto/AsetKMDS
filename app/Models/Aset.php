@@ -20,5 +20,10 @@ class Aset extends Model
         'nama_user',
         'lokasi',
         'keterangan',
+        'waktu_pengerjaan',
+    ];
+
+    protected $casts = [
+        'waktu_pengerjaan' => 'datetime',
     ];
 }
