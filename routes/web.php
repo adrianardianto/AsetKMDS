@@ -22,5 +22,6 @@ Route::get('/riwayat-aset', [RiwayatAsetController::class, 'index'])->name('riwa
 use App\Http\Controllers\StockOpnameController;
 Route::get('stock-opname/{id}/action', [StockOpnameController::class, 'action'])->name('stock-opname.action');
 Route::post('stock-opname/{id}/complete', [StockOpnameController::class, 'complete'])->name('stock-opname.complete');
+Route::post('stock-opname/{id}/reopen', [StockOpnameController::class, 'reopen'])->name('stock-opname.reopen');
 Route::post('stock-opname/record', [StockOpnameController::class, 'updateRecord'])->name('stock-opname.update-record');
 Route::resource('stock-opname', StockOpnameController::class);

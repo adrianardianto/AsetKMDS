@@ -11,6 +11,9 @@ export default function Index({ periods }) {
 
     const [editingPeriod, setEditingPeriod] = useState(null);
     const [isCreating, setIsCreating] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteId, setDeleteId] = useState(null);
+    const [verificationText, setVerificationText] = useState('');
 
     const submit = (e) => {
         e.preventDefault();
@@ -45,9 +48,22 @@ export default function Index({ periods }) {
     };
 
     const handleDelete = (id) => {
-        if (confirm('Apakah Anda yakin ingin menghapus periode ini? Semua data opname di dalamnya akan terhapus permanen.')) {
-            router.delete(`/stock-opname/${id}`, {
+        setDeleteId(id);
+        setShowDeleteModal(true);
+        setVerificationText('');
+    };
+
+    const cleanupDelete = () => {
+        setShowDeleteModal(false);
+        setDeleteId(null);
+        setVerificationText('');
+    };
+
+    const executeDelete = () => {
+        if (verificationText === 'Hapus') {
+            router.delete(`/stock-opname/${deleteId}`, {
                 preserveScroll: true,
+                onSuccess: () => cleanupDelete(),
             });
         }
     };
@@ -63,14 +79,18 @@ export default function Index({ periods }) {
             <Head title="Stock Opname" />
 
             <div className="max-w-6xl mx-auto">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Stock Opname</h1>
-                        <p className="text-sm text-gray-500">Kelola periode opname aset.</p>
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Stock Opname</h1>
+                        <p className="text-xs sm:text-sm text-gray-500">Kelola periode opname aset.</p>
                     </div>
                     <button
                         onClick={() => isCreating ? cancelEdit() : setIsCreating(true)}
-                        className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
+                        className={`text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition ${
+                            isCreating 
+                                ? 'bg-gray-500 hover:bg-gray-600' 
+                                : 'bg-[#b8860b] hover:bg-[#8b6508]'
+                        }`}
                     >
                         {isCreating ? 'Batal' : '+ Buat Periode Baru'}
                     </button>
@@ -116,7 +136,7 @@ export default function Index({ periods }) {
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition disabled:opacity-50"
+                                    className="bg-[#b8860b] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#8b6508] transition disabled:opacity-50"
                                 >
                                     {editingPeriod ? 'Simpan Perubahan' : 'Simpan & Buat'}
                                 </button>
@@ -129,45 +149,64 @@ export default function Index({ periods }) {
                     {periods.map((period) => (
                         <div
                             key={period.id}
-                            className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition group relative"
+                            className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow group relative flex flex-col justify-between h-[220px]"
                         >
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 transition">
-                                        <Link href={`/stock-opname/${period.id}`}>
-                                            {period.judul}
-                                        </Link>
-                                    </h3>
-                                    <p className="text-xs text-gray-500 mt-1">Dibuat: {new Date(period.created_at).toLocaleDateString()}</p>
+                            <div>
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="flex-1 pr-2">
+                                        <h3 className="font-bold text-gray-900 text-lg group-hover:text-[#b8860b] transition leading-tight mb-2">
+                                            <Link href={`/stock-opname/${period.id}`}>
+                                                {period.judul}
+                                            </Link>
+                                        </h3>
+                                        <p className="text-xs text-gray-400 flex items-center gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                                              <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                                            </svg>
+                                            {new Date(period.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                        </p>
+                                    </div>
+                                    
+                                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border flex items-center gap-1.5 shrink-0 ${
+                                        period.status === 'Aktif' 
+                                            ? 'bg-green-50 text-green-700 border-green-200' 
+                                            : 'bg-gray-50 text-gray-500 border-gray-200'
+                                    }`}>
+                                        <span className={`w-1.5 h-1.5 rounded-full ${period.status === 'Aktif' ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                                        {period.status}
+                                    </span>
                                 </div>
-                                <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                                    period.status === 'Aktif' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                                }`}>
-                                    {period.status}
-                                </span>
+                                <p className="text-sm text-gray-500 line-clamp-2">
+                                    {period.keterangan || 'Tidak ada keterangan tambahan.'}
+                                </p>
                             </div>
-                            <p className="text-sm text-gray-600 mb-12 line-clamp-2">
-                                {period.keterangan || 'Tidak ada keterangan.'}
-                            </p>
                             
-                            <div className="absolute bottom-6 left-6 right-6 flex justify-between items-center border-t pt-4">
-                                <Link href={`/stock-opname/${period.id}`} className="text-xs text-indigo-600 font-medium">
-                                    Buka Dashboard &rarr;
-                                </Link>
-                                <div className="flex gap-3">
+                            <div className="flex justify-between items-center border-t border-gray-100 pt-4 mt-4">
+                                <div className="flex gap-2">
                                     <button 
                                         onClick={() => handleEdit(period)}
-                                        className="text-xs text-gray-500 hover:text-blue-600 font-medium"
+                                        className="text-xs bg-yellow-50 text-yellow-700 border border-yellow-200 px-3 py-1.5 rounded-lg hover:bg-yellow-100 transition font-medium"
+                                        title="Edit Periode"
                                     >
                                         Edit
                                     </button>
                                     <button 
                                         onClick={() => handleDelete(period.id)}
-                                        className="text-xs text-gray-500 hover:text-red-600 font-medium"
+                                        className="text-xs bg-red-50 text-red-700 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-medium"
+                                        title="Hapus Periode"
                                     >
                                         Hapus
                                     </button>
                                 </div>
+                                <Link 
+                                    href={`/stock-opname/${period.id}`} 
+                                    className="text-xs bg-[#b8860b] text-white px-4 py-2 rounded-lg hover:bg-[#8b6508] transition font-medium flex items-center gap-2 shadow-sm"
+                                >
+                                    <span>Buka</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </Link>
                             </div>
                         </div>
                     ))}
@@ -179,6 +218,57 @@ export default function Index({ periods }) {
                     )}
                 </div>
             </div>
+
+
+            {/* Custom Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-fade-in-up">
+                        <div className="text-center mb-6">
+                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900">Konfirmasi Penghapusan</h3>
+                            <p className="text-sm text-gray-500 mt-2">
+                                Apakah Anda yakin ingin menghapus Stock Opname ini?
+                            </p>
+                        </div>
+
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Ketik <span className="font-mono font-bold text-red-600">"Hapus"</span> untuk melanjutkan
+
+                            </label>
+                            <input
+                                type="text"
+                                className="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-center"
+                                placeholder="Hapus"
+                                value={verificationText}
+                                onChange={(e) => setVerificationText(e.target.value)}
+                                autoFocus
+                            />
+                        </div>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={cleanupDelete}
+                                className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                onClick={executeDelete}
+                                disabled={verificationText !== 'Hapus'}
+                                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Hapus Permanen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </MainLayout>
     );
 }
