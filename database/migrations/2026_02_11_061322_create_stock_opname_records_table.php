@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('stock_opname_period_id')->constrained('stock_opname_periods')->onDelete('cascade');
             $table->foreignId('aset_id')->constrained('asets')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->string('status')->default('ada'); // ada, hilang, tidak_ditemukan
-            $table->string('kondisi')->default('Baik'); // Baik, Rusak, Lainnya
+            $table->string('status')->default('ada');
+            $table->string('kondisi')->default('Baik');
             $table->text('catatan')->nullable();
             $table->timestamp('tanggal_cek')->useCurrent();
             $table->timestamps();

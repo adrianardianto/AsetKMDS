@@ -13,7 +13,18 @@ class StockOpnameRecord extends Model
         'status',
         'kondisi',
         'catatan',
+        'lokasi',
+        'nama_user',
         'tanggal_cek',
+        'snapshot_nama_aset',
+        'snapshot_kode_aset',
+        'snapshot_serial_number',
+        'snapshot_tanggal_beli',
+        'snapshot_harga_aset',
+        'snapshot_kondisi_aset',
+        'snapshot_lokasi',
+        'snapshot_nama_user',
+        'is_snapshot_only',
     ];
 
     public function period()
