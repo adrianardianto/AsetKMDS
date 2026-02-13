@@ -20,6 +20,9 @@ use App\Http\Controllers\RiwayatAsetController;
 Route::get('/riwayat-aset', [RiwayatAsetController::class, 'index'])->name('riwayat-aset.index');
 
 use App\Http\Controllers\StockOpnameController;
+Route::get('stock-opname/{id}/export', [StockOpnameController::class, 'export'])->name('stock-opname.export');
+Route::get('stock-opname/{id}/export-all', [StockOpnameController::class, 'exportAll'])->name('stock-opname.export-all');
+Route::get('stock-opname/{id}/all-assets', [StockOpnameController::class, 'getAllAssets'])->name('stock-opname.all-assets');
 Route::get('stock-opname/{id}/action', [StockOpnameController::class, 'action'])->name('stock-opname.action');
 Route::post('stock-opname/{id}/complete', [StockOpnameController::class, 'complete'])->name('stock-opname.complete');
 Route::post('stock-opname/{id}/reopen', [StockOpnameController::class, 'reopen'])->name('stock-opname.reopen');

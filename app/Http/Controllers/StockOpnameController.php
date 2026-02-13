@@ -133,7 +133,7 @@ class StockOpnameController extends Controller
                 ];
             });
 
-            // Dalam freeze mode (bukan master)
+            // Dalam freeze mode, lokasi juga dari snapshot (bukan master)
             $allLocations = StockOpnameRecord::where('stock_opname_period_id', $id)
                 ->whereNotNull('snapshot_lokasi')
                 ->select('snapshot_lokasi')
@@ -141,7 +141,7 @@ class StockOpnameController extends Controller
                 ->orderBy('snapshot_lokasi')
                 ->pluck('snapshot_lokasi');
         } else {
-            // === LIVE MODE: Data dari master aset ===
+            // LIVE MODE: Data dari master aset
             $assets = Aset::where('lokasi', $location)
                 ->with(['stockOpnameRecords' => function($q) use ($id) {
                     $q->where('stock_opname_period_id', $id);
@@ -177,6 +177,239 @@ class StockOpnameController extends Controller
             'location' => $location,
             'assets' => $assets,
             'allLocations' => $allLocations,
+        ]);
+    }
+
+    public function export(Request $request, $id)
+    {
+        $period = StockOpnamePeriod::findOrFail($id);
+        $location = $request->query('lokasi');
+        $isFrozen = $period->status === 'Selesai';
+        $filename = "StockOpname-{$period->judul}" . ($location ? "-{$location}" : "") . "-" . date('d-m-Y') . ".csv";
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+        
+        if ($isFrozen) {
+            // === FREEZE MODE ===
+            $query = StockOpnameRecord::where('stock_opname_period_id', $id)->with('aset');
+            if ($location) {
+                $query->where('snapshot_lokasi', $location);
+            }
+            $records = $query->get();
+            
+             $assets = $records->map(function ($record) {
+                return [
+                    'kode_aset' => $record->snapshot_kode_aset,
+                    'nama_aset' => $record->snapshot_nama_aset,
+                    'serial_number' => $record->snapshot_serial_number,
+                    'tanggal_beli' => $record->snapshot_tanggal_beli ? date('d/m/Y', strtotime($record->snapshot_tanggal_beli)) : '-',
+                    'nama_user' => $record->is_snapshot_only ? $record->snapshot_nama_user : ($record->nama_user ?? $record->snapshot_nama_user),
+                    'lokasi' => $record->is_snapshot_only ? $record->snapshot_lokasi : ($record->lokasi ?? $record->snapshot_lokasi),
+                    'status' => $record->is_snapshot_only ? 'Belum Dicek' : ($record->status == 'ada' ? 'Ada' : 'Hilang/Tidak Ditemukan'),
+                    'kondisi' => $record->is_snapshot_only ? ($record->snapshot_kondisi_aset ?? 'Bagus') : ($record->kondisi ?? 'Bagus'),
+                    'catatan' => $record->is_snapshot_only ? '' : ($record->catatan ?? ''),
+                ];
+            });
+
+        } else {
+             // === LIVE MODE ===
+             if ($location) {
+                 $assetsQuery = Aset::where('lokasi', $location);
+             } else {
+                 $assetsQuery = Aset::query();
+             }
+             
+             $assets = $assetsQuery->with(['stockOpnameRecords' => function($q) use ($id) {
+                    $q->where('stock_opname_period_id', $id);
+                }])
+                ->get()
+                ->map(function ($aset) {
+                    $record = $aset->stockOpnameRecords->first();
+                    return [
+                        'kode_aset' => $aset->kode_aset,
+                        'nama_aset' => $aset->nama_aset,
+                        'serial_number' => $aset->serial_number,
+                        'tanggal_beli' => $aset->tanggal_beli ? date('d/m/Y', strtotime($aset->tanggal_beli)) : '-',
+                        'nama_user' => $record ? $record->nama_user : $aset->nama_user,
+                        'lokasi' => $record ? $record->lokasi : $aset->lokasi,
+                        'status' => $record ? ($record->status == 'ada' ? 'Ada' : 'Hilang') : 'Belum Dicek',
+                        'kondisi' => $record ? $record->kondisi : ($aset->kondisi_aset),
+                        'catatan' => $record ? $record->catatan : '',
+                    ];
+                });
+        }
+
+        $callback = function() use($assets) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Kode Aset', 'Nama Aset', 'Serial Number', 'Tanggal Beli', 'User', 'Lokasi', 'Status Check', 'Kondisi Fisik', 'Catatan']);
+
+            foreach ($assets as $row) {
+                fputcsv($file, [
+                    $row['kode_aset'],
+                    $row['nama_aset'],
+                    $row['serial_number'],
+                    $row['tanggal_beli'],
+                    $row['nama_user'],
+                    $row['lokasi'],
+                    $row['status'],
+                    $row['kondisi'],
+                    $row['catatan'],
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportAll($id)
+    {
+        $period = StockOpnamePeriod::findOrFail($id);
+        $isFrozen = $period->status === 'Selesai';
+        $filename = "StockOpname-{$period->judul}-Semua-Lokasi-" . date('d-m-Y') . ".csv";
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+        
+        if ($isFrozen) {
+            // === FREEZE MODE: Export all from snapshot ===
+            $records = StockOpnameRecord::where('stock_opname_period_id', $id)
+                ->with('aset')
+                ->orderBy('snapshot_lokasi')
+                ->orderBy('snapshot_kode_aset')
+                ->get();
+            
+            $assets = $records->map(function ($record) {
+                return [
+                    'kode_aset' => $record->snapshot_kode_aset,
+                    'nama_aset' => $record->snapshot_nama_aset,
+                    'serial_number' => $record->snapshot_serial_number,
+                    'kategori' => $record->aset->kategori_aset ?? '-',
+                    'tanggal_beli' => $record->snapshot_tanggal_beli ? date('d/m/Y', strtotime($record->snapshot_tanggal_beli)) : '-',
+                    'nama_user' => $record->is_snapshot_only ? $record->snapshot_nama_user : ($record->nama_user ?? $record->snapshot_nama_user),
+                    'lokasi' => $record->is_snapshot_only ? $record->snapshot_lokasi : ($record->lokasi ?? $record->snapshot_lokasi),
+                    'status' => $record->is_snapshot_only ? 'Belum Dicek' : ($record->status == 'ada' ? 'Ada' : 'Hilang'),
+                    'kondisi' => $record->is_snapshot_only ? ($record->snapshot_kondisi_aset ?? 'Bagus') : ($record->kondisi ?? 'Bagus'),
+                    'catatan' => $record->is_snapshot_only ? '' : ($record->catatan ?? ''),
+                ];
+            });
+
+        } else {
+            // === LIVE MODE: Export all from master ===
+            $assets = Aset::with(['stockOpnameRecords' => function($q) use ($id) {
+                    $q->where('stock_opname_period_id', $id);
+                }])
+                ->orderBy('lokasi')
+                ->orderBy('kode_aset')
+                ->get()
+                ->map(function ($aset) {
+                    $record = $aset->stockOpnameRecords->first();
+                    return [
+                        'kode_aset' => $aset->kode_aset,
+                        'nama_aset' => $aset->nama_aset,
+                        'serial_number' => $aset->serial_number,
+                        'kategori' => $aset->kategori_aset,
+                        'tanggal_beli' => $aset->tanggal_beli ? date('d/m/Y', strtotime($aset->tanggal_beli)) : '-',
+                        'nama_user' => $record ? $record->nama_user : $aset->nama_user,
+                        'lokasi' => $record ? $record->lokasi : $aset->lokasi,
+                        'status' => $record ? ($record->status == 'ada' ? 'Ada' : 'Hilang') : 'Belum Dicek',
+                        'kondisi' => $record ? $record->kondisi : ($aset->kondisi_aset),
+                        'catatan' => $record ? $record->catatan : '',
+                    ];
+                });
+        }
+
+        $callback = function() use($assets) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Kode Aset', 'Nama Aset', 'Serial Number', 'Kategori', 'Tanggal Beli', 'User', 'Lokasi', 'Keberadaan', 'Kondisi Fisik', 'Catatan']);
+
+            foreach ($assets as $row) {
+                fputcsv($file, [
+                    $row['kode_aset'],
+                    $row['nama_aset'],
+                    $row['serial_number'],
+                    $row['kategori'],
+                    $row['tanggal_beli'],
+                    $row['nama_user'],
+                    $row['lokasi'],
+                    $row['status'],
+                    $row['kondisi'],
+                    $row['catatan'],
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function getAllAssets($id)
+    {
+        $period = StockOpnamePeriod::findOrFail($id);
+        $isFrozen = $period->status === 'Selesai';
+
+        if ($isFrozen) {
+            // === FREEZE MODE ===
+            $records = StockOpnameRecord::where('stock_opname_period_id', $id)
+                ->with('aset')
+                ->orderBy('snapshot_lokasi')
+                ->orderBy('snapshot_kode_aset')
+                ->get();
+            
+            $assets = $records->map(function ($record) {
+                return [
+                    'kode_aset' => $record->snapshot_kode_aset,
+                    'nama_aset' => $record->snapshot_nama_aset,
+                    'serial_number' => $record->snapshot_serial_number,
+                    'kategori_aset' => $record->aset->kategori_aset ?? '-',
+                    'tanggal_beli' => $record->snapshot_tanggal_beli,
+                    'nama_user' => $record->is_snapshot_only ? $record->snapshot_nama_user : ($record->nama_user ?? $record->snapshot_nama_user),
+                    'lokasi' => $record->is_snapshot_only ? $record->snapshot_lokasi : ($record->lokasi ?? $record->snapshot_lokasi),
+                    'opname_status' => $record->is_snapshot_only ? null : $record->status,
+                    'kondisi' => $record->is_snapshot_only ? ($record->snapshot_kondisi_aset ?? 'Bagus') : ($record->kondisi ?? 'Bagus'),
+                    'catatan' => $record->is_snapshot_only ? '' : ($record->catatan ?? ''),
+                ];
+            });
+        } else {
+            // === LIVE MODE ===
+            $assets = Aset::with(['stockOpnameRecords' => function($q) use ($id) {
+                    $q->where('stock_opname_period_id', $id);
+                }])
+                ->orderBy('lokasi')
+                ->orderBy('kode_aset')
+                ->get()
+                ->map(function ($aset) {
+                    $record = $aset->stockOpnameRecords->first();
+                    return [
+                        'kode_aset' => $aset->kode_aset,
+                        'nama_aset' => $aset->nama_aset,
+                        'serial_number' => $aset->serial_number,
+                        'kategori_aset' => $aset->kategori_aset,
+                        'tanggal_beli' => $aset->tanggal_beli,
+                        'nama_user' => $record ? $record->nama_user : $aset->nama_user,
+                        'lokasi' => $record ? $record->lokasi : $aset->lokasi,
+                        'opname_status' => $record ? $record->status : null,
+                        'kondisi' => $record ? $record->kondisi : ($aset->kondisi_aset),
+                        'catatan' => $record ? $record->catatan : '',
+                    ];
+                });
+        }
+
+        return response()->json([
+            'assets' => $assets
         ]);
     }
 

@@ -78,6 +78,23 @@ export default function Form({ period, location, assets, allLocations }) {
         setKondisi('');
     };
 
+    const handlePrint = () => {
+        const originalTitle = document.title;
+        const now = new Date();
+        const formattedDate = now.toLocaleString('id-ID', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric'
+        }).replace(/\//g, '-');
+        
+        document.title = `Laporan Stock Opname - ${location} - ${formattedDate}`;
+        window.print();
+        
+        setTimeout(() => {
+            document.title = originalTitle;
+        }, 1000);
+    };
+
     const filteredAssets = localAssets.filter(asset => {
         const matchesSearch = search === '' || 
             (asset.nama_aset && asset.nama_aset.toLowerCase().includes(search.toLowerCase())) ||
@@ -102,11 +119,146 @@ export default function Form({ period, location, assets, allLocations }) {
 
     return (
         <MainLayout>
+            <style>{`
+                @media print {
+                    @page {
+                        size: landscape;
+                        margin: 0mm;
+                    }
+                    
+                    /* Hide Structural Elements */
+                    nav, aside, header, footer, .fixed, .sticky {
+                        display: none !important;
+                    }
+                    
+                    /* Reset Main Content Layout */
+                    main {
+                        height: auto !important;
+                        overflow: visible !important;
+                        display: block !important;
+                        width: 100% !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
+
+                    /* Reset Body & HTML */
+                    html, body {
+                        background-color: #ffffff !important;
+                        height: auto !important;
+                        min-height: 0 !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        overflow: visible !important;
+                        -webkit-print-color-adjust: exact;
+                    }
+
+                    /* Reset App Wrapper */
+                    #app, .min-h-screen, [data-page] {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        min-height: 0 !important;
+                        height: auto !important;
+                    }
+
+                    /* Reset backgrounds */
+                    *, *::before, *::after {
+                        background-color: transparent !important;
+                        color: #000 !important;
+                        box-shadow: none !important;
+                        text-shadow: none !important;
+                    }
+
+                    /* Specific overrides */
+                    .bg-slate-50, .bg-gray-50, .bg-white, .bg-blue-50 {
+                        background-color: transparent !important;
+                        border: none !important;
+                    }
+
+                    .print-header {
+                        display: block !important;
+                        text-align: center;
+                        margin-bottom: 20px;
+                        padding-top: 20px;
+                    }
+                    .print-hidden {
+                        display: none !important;
+                    }
+                    .print-visible {
+                        display: block !important;
+                    }
+                    
+                    /* Clean Table Styling */
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        border: 2px solid #000;
+                        font-size: 9pt;
+                        margin-bottom: 0 !important;
+                    }
+                    th, td {
+                        border: 1px solid #000 !important;
+                        padding: 4px 6px !important;
+                        text-align: left;
+                        vertical-align: top;
+                        color: #000 !important;
+                        background-color: transparent !important;
+                        white-space: normal !important;
+                    }
+                    thead th {
+                        font-weight: bold;
+                        text-align: center !important;
+                        background-color: transparent !important;
+                        color: #000 !important;
+                        border-bottom: 2px solid #000 !important;
+                    }
+                    
+                    th:first-child, td:first-child {
+                        width: 1% !important;
+                        white-space: nowrap !important;
+                        text-align: center !important;
+                    }
+                    
+                    /* Flatten Status Badges */
+                    .print-status {
+                        background-color: transparent !important;
+                        color: #000 !important;
+                        font-weight: normal !important;
+                        padding: 0 !important;
+                        border: none !important;
+                    }
+                    
+                    /* Remove shadows and rounded corners */
+                    .shadow-sm, .rounded-xl, .border, .border-slate-200 {
+                        box-shadow: none !important;
+                        border-radius: 0 !important;
+                        border: none !important;
+                    }
+                    
+                    /* Ensure table full width */
+                    .max-w-6xl { 
+                        max-width: none !important; 
+                        width: 100% !important; 
+                        margin: 0 !important; 
+                        padding: 10mm !important;
+                    }
+                }
+                .print-header {
+                    display: none;
+                }
+                .print-visible {
+                    display: none;
+                }
+            `}</style>
             <Head title={`Cek Lokasi: ${location}`} />
 
             <div className="max-w-6xl mx-auto">
+                 <div className="print-header">
+                    <h1 className="text-2xl font-bold text-black mb-1">Laporan Stock Opname - {location}</h1>
+                    <p className="text-sm text-black">Periode: {period.judul}</p>
+                    <p className="text-sm text-black">Tanggal Cetak: {new Date().toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                </div>
                  {/* Header */}
-                <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 print:hidden">
                     <div>
                         <div className="mb-2">
                             <Link 
@@ -134,9 +286,24 @@ export default function Form({ period, location, assets, allLocations }) {
                                 <span>Read-Only (Snapshot Historis)</span>
                             </div>
                         )}
-                        <div className="bg-[#b8860b]/10 text-[#b8860b] px-4 py-2 rounded-lg text-sm font-medium">
-                            Total Aset: {localAssets.length}
-                        </div>
+
+                        <a 
+                            href={`/stock-opname/${period.id}/export?lokasi=${encodeURIComponent(location)}`}
+                            target="_blank"
+                            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition shadow-sm"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Export CSV
+                        </a>
+                        <button 
+                            onClick={handlePrint}
+                            className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-900 transition shadow-sm"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                            Print/PDF
+                        </button>
                     </div>
                 </div>
 
@@ -232,7 +399,7 @@ export default function Form({ period, location, assets, allLocations }) {
                 </div>
 
                 {/* Table Card */}
-                <div className={`bg-white rounded-xl shadow-sm border overflow-hidden ${isFrozen ? 'border-blue-200' : 'border-gray-200'}`}>
+                <div className={`bg-white rounded-xl shadow-sm border overflow-hidden ${isFrozen ? 'border-blue-200' : 'border-gray-200'} print:hidden`}>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
@@ -452,6 +619,47 @@ export default function Form({ period, location, assets, allLocations }) {
                             Tidak ada aset di lokasi ini.
                         </div>
                     )}
+                </div>
+
+                {/* Print Table */}
+                <div className="print-visible hidden">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Kode Aset</th>
+                                <th>Nama Aset</th>
+                                <th>Serial Number</th>
+                                <th>Kategori</th>
+                                <th>Lokasi</th>
+                                <th>User</th>
+                                <th>Tanggal Beli</th>
+                                <th>Keberadaan</th>
+                                <th>Kondisi</th>
+                                <th>Catatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredAssets.map((asset, index) => (
+                                <tr key={asset.id}>
+                                    <td className="text-center">{index + 1}</td>
+                                    <td className="font-mono">{asset.kode_aset}</td>
+                                    <td>{asset.nama_aset}</td>
+                                    <td>{asset.serial_number || '-'}</td>
+                                    <td>{asset.kategori_aset}</td>
+                                    <td>{asset.lokasi || '-'}</td>
+                                    <td>{asset.opname_nama_user || '-'}</td>
+                                    <td>{asset.tanggal_beli ? new Date(asset.tanggal_beli).toLocaleDateString('id-ID') : '-'}</td>
+                                    <td>
+                                        {asset.opname_status === 'ada' ? 'Ada' : 
+                                         asset.opname_status === 'hilang' ? 'Hilang' : 'Belum Dicek'}
+                                    </td>
+                                    <td>{asset.opname_kondisi || '-'}</td>
+                                    <td>{asset.catatan || '-'}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </MainLayout>
