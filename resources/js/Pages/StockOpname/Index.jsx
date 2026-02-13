@@ -104,7 +104,7 @@ export default function Index({ periods }) {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Judul Opname</label>
                                 <input
                                     type="text"
-                                    className="w-full rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full rounded-lg border-gray-300 focus:ring-[#b8860b] focus:border-[#b8860b]"
                                     placeholder="Contoh: SO 2026"
                                     value={data.judul}
                                     onChange={e => setData('judul', e.target.value)}
@@ -116,7 +116,7 @@ export default function Index({ periods }) {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
                                 <input
                                     type="date"
-                                    className="w-full rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full rounded-lg border-gray-300 focus:ring-[#b8860b] focus:border-[#b8860b]"
                                     value={data.tanggal_mulai}
                                     onChange={e => setData('tanggal_mulai', e.target.value)}
                                     required
@@ -126,7 +126,7 @@ export default function Index({ periods }) {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Keterangan</label>
                                 <input
                                     type="text"
-                                    className="w-full rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full rounded-lg border-gray-300 focus:ring-[#b8860b] focus:border-[#b8860b]"
                                     placeholder="Opsional..."
                                     value={data.keterangan}
                                     onChange={e => setData('keterangan', e.target.value)}

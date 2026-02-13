@@ -341,49 +341,49 @@ export default function UpdateAset({ asets, filters = {} }) {
                         <table className="min-w-full divide-y divide-slate-200">
                             <thead className="bg-slate-50">
                                 <tr>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-12 text-center">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider w-12 text-center">
                                         No
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Kode Aset
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Nama Aset
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Serial Number
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Tipe Aset
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Kategori
                                     </th>
-                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                     <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Jenis Aset
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Lokasi
                                     </th>
-                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                     <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         User
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Tanggal Beli
                                     </th>
-                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                     <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Umur
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Harga
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-4 py-2 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wider">
                                         Keterangan
                                     </th>
-                                    <th scope="col" className="relative px-6 py-3 print:hidden">
+                                    <th scope="col" className="relative px-4 py-2 print:hidden">
                                         <span className="sr-only">Actions</span>
                                     </th>
                                 </tr>
@@ -392,44 +392,44 @@ export default function UpdateAset({ asets, filters = {} }) {
                                 {asets.length > 0 ? (
                                     asets.map((aset, index) => (
                                         <tr key={aset.id} className="hover:bg-slate-50 transition-colors">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500 text-center">
                                                 {index + 1}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs font-medium text-gray-900">
                                                 {aset.kode_aset}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-600">
                                                 {aset.nama_aset}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500">
                                                 {aset.serial_number}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500">
                                                 {aset.tipe_aset}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500">
                                                 {aset.kategori_aset}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500">
                                                 {aset.jenis_aset}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500">
                                                 {aset.lokasi}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500">
                                                 {aset.nama_user}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500">
                                                 {aset.tanggal_beli}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500">
                                                 {aset.umur_aset} Tahun
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500">
                                                 Rp {new Intl.NumberFormat('id-ID').format(aset.harga_aset)}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full print-status ${
+                                            <td className="px-4 py-2.5 whitespace-nowrap">
+                                                <span className={`px-2 inline-flex text-[10px] leading-5 font-semibold rounded-full print-status ${
                                                     aset.kondisi_aset === 'Bagus' 
                                                         ? 'bg-green-100 text-green-800' 
                                                         : aset.kondisi_aset === 'Rusak'
@@ -439,10 +439,10 @@ export default function UpdateAset({ asets, filters = {} }) {
                                                     {aset.kondisi_aset}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-xs text-gray-500">
                                                 {aset.keterangan || '-'}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium print:hidden">
+                                            <td className="px-4 py-2.5 whitespace-nowrap text-right text-xs font-medium print:hidden">
                                                 <Link 
                                                     href={`/update-aset/${aset.id}/edit`} 
                                                     className="text-kmds-gold hover:text-yellow-600 font-medium"

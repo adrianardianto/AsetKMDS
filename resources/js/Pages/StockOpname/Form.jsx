@@ -110,43 +110,43 @@ export default function Form({ period, location, assets, allLocations }) {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className={`border-b text-[11px] uppercase font-semibold ${isFrozen ? 'bg-blue-50/50 border-blue-100 text-blue-600' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
-                                    <th className="px-3 py-2.5 w-[40px]">No</th>
-                                    <th className="px-3 py-2.5">Kode Aset</th>
-                                    <th className="px-3 py-2.5">Nama Aset</th>
-                                    <th className="px-3 py-2.5 whitespace-nowrap">Serial Number</th>
-                                    <th className="px-3 py-2.5 whitespace-nowrap">Tgl Beli</th>
-                                    <th className="px-3 py-2.5 w-[100px]">User</th>
-                                    <th className="px-3 py-2.5">Lokasi</th>
-                                    <th className="px-3 py-2.5">Keberadaan</th>
-                                    <th className="px-3 py-2.5 w-[120px] whitespace-nowrap">Kondisi Fisik</th>
-                                    <th className="px-3 py-2.5">Catatan</th>
+                                <tr className={`border-b text-xs uppercase font-medium ${isFrozen ? 'bg-blue-50/50 border-blue-100 text-blue-600' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
+                                    <th className="px-2 py-2.5 w-[45px] text-center">No</th>
+                                    <th className="px-2 py-2.5 w-[130px]">Kode Aset</th>
+                                    <th className="px-2 py-2.5 w-[180px]">Nama Aset</th>
+                                    <th className="px-2 py-2.5 w-[110px] whitespace-nowrap">Serial Number</th>
+                                    <th className="px-2 py-2.5 w-[90px] whitespace-nowrap">Tgl Beli</th>
+                                    <th className="px-2 py-2.5 w-[120px]">User</th>
+                                    <th className="px-2 py-2.5 w-[150px]">Lokasi</th>
+                                    <th className="px-2 py-2.5 w-[130px] whitespace-nowrap">Keberadaan</th>
+                                    <th className="px-2 py-2.5 w-[140px] whitespace-nowrap">Kondisi Fisik</th>
+                                    <th className="px-2 py-2.5 min-w-[140px]">Catatan</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {filteredAssets.map((asset, index) => (
                                     <tr key={asset.id} className={`transition ${isFrozen ? 'bg-gray-50/30' : 'hover:bg-gray-50'}`}>
-                                        <td className="px-3 py-2.5 align-top text-[11px] text-gray-500 text-center">
+                                        <td className="px-2 py-2.5 align-top text-sm text-gray-500 text-center w-[45px]">
                                             {index + 1}
                                         </td>
-                                        <td className="px-3 py-2.5 align-top font-mono text-[11px] text-gray-600">
+                                        <td className="px-2 py-2.5 align-top font-mono text-xs text-gray-600 w-[130px]">
                                             {asset.kode_aset}
                                         </td>
-                                        <td className="px-3 py-2.5 align-top">
-                                            <div className="font-medium text-gray-900 text-sm">{asset.nama_aset}</div>
+                                        <td className="px-2 py-2.5 align-top w-[180px]">
+                                            <div className="font-medium text-gray-900 text-sm leading-tight">{asset.nama_aset}</div>
                                             {savingId === asset.id && (
                                                 <span className="text-[10px] text-indigo-500 animate-pulse block">Saving...</span>
                                             )}
                                         </td>
-                                        <td className="px-3 py-2.5 align-top text-[11px] text-gray-600 font-mono">
+                                        <td className="px-2 py-2.5 align-top text-xs text-gray-600 font-mono w-[110px]">
                                             {asset.serial_number || '-'}
                                         </td>
-                                        <td className="px-3 py-2.5 align-top text-[11px] text-gray-600">
+                                        <td className="px-2 py-2.5 align-top text-xs text-gray-600 w-[90px]">
                                             {asset.tanggal_beli ? new Date(asset.tanggal_beli).toLocaleDateString('id-ID') : '-'}
                                         </td>
-                                        <td className="px-3 py-2.5 align-top w-[100px]">
+                                        <td className="px-2 py-2.5 align-top w-[120px]">
                                             {isFrozen ? (
-                                                <div className="text-xs text-gray-700 py-1">
+                                                <div className="text-sm text-gray-700 py-0.5">
                                                     {asset.opname_nama_user || '-'}
                                                 </div>
                                             ) : (
@@ -157,7 +157,7 @@ export default function Form({ period, location, assets, allLocations }) {
                                                         onChange={(e) => updateLocal(asset.id, 'opname_nama_user', e.target.value)}
                                                         onBlur={(e) => updateRecord(asset.id, 'opname_nama_user', e.target.value)}
                                                         placeholder="..."
-                                                        className="w-full text-xs border-gray-200 rounded px-2 py-1 focus:ring-indigo-500 focus:border-indigo-500"
+                                                        className="w-full text-xs border-gray-200 rounded px-2 py-1.5 focus:ring-[#b8860b] focus:border-[#b8860b]"
                                                     />
                                                     {asset.opname_nama_user && asset.opname_nama_user !== asset.nama_user && (
                                                         <div className="text-[10px] text-orange-500 mt-1">
@@ -167,9 +167,9 @@ export default function Form({ period, location, assets, allLocations }) {
                                                 </>
                                             )}
                                         </td>
-                                        <td className="px-3 py-2.5 align-top">
+                                        <td className="px-2 py-2.5 align-top w-[150px]">
                                             {isFrozen ? (
-                                                <div className="text-xs text-gray-700 py-1">
+                                                <div className="text-sm text-gray-700 py-0.5">
                                                     {asset.lokasi || '-'}
                                                     {asset.lokasi && asset.lokasi !== location && (
                                                         <div className="text-[10px] text-orange-500 mt-1">
@@ -182,7 +182,7 @@ export default function Form({ period, location, assets, allLocations }) {
                                                     <select
                                                         value={asset.lokasi}
                                                         onChange={(e) => updateRecord(asset.id, 'lokasi', e.target.value)}
-                                                        className="w-full text-xs rounded border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 py-1"
+                                                        className="w-full text-xs rounded border-gray-200 focus:ring-[#b8860b] focus:border-[#b8860b] py-1.5 px-2"
                                                     >
                                                         {allLocations.map((loc, idx) => (
                                                             <option key={idx} value={loc}>{loc}</option>
@@ -196,22 +196,22 @@ export default function Form({ period, location, assets, allLocations }) {
                                                 </>
                                             )}
                                         </td>
-                                        <td className="px-3 py-2.5">
+                                        <td className="px-2 py-2.5 align-top w-[130px]">
                                             {isFrozen ? (
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-1.5">
                                                     {asset.opname_status === 'ada' ? (
-                                                        <span className="px-2 py-1 rounded text-[11px] font-medium bg-green-100 text-green-700 border border-green-200">Ada</span>
+                                                        <span className="px-2.5 py-1 rounded text-xs font-medium bg-green-100 text-green-700 border border-green-200">Ada</span>
                                                     ) : asset.opname_status === 'hilang' ? (
-                                                        <span className="px-2 py-1 rounded text-[11px] font-medium bg-red-100 text-red-700 border border-red-200">Hilang</span>
+                                                        <span className="px-2.5 py-1 rounded text-xs font-medium bg-red-100 text-red-700 border border-red-200">Hilang</span>
                                                     ) : (
-                                                        <span className="px-2 py-1 rounded text-[11px] font-medium bg-gray-100 text-gray-400 border border-gray-200 italic">Belum Dicek</span>
+                                                        <span className="px-2.5 py-1 rounded text-xs font-medium bg-gray-100 text-gray-400 border border-gray-200 italic">Belum Dicek</span>
                                                     )}
                                                 </div>
                                             ) : (
-                                                <div className="flex gap-1">
+                                                <div className="flex gap-1 whitespace-nowrap">
                                                     <button
                                                         onClick={() => updateRecord(asset.id, 'opname_status', asset.opname_status === 'ada' ? null : 'ada')}
-                                                        className={`px-2 py-1 rounded text-[11px] font-medium border transition ${
+                                                        className={`px-2.5 py-1 rounded text-xs font-medium border transition ${
                                                             asset.opname_status === 'ada'
                                                                 ? 'bg-green-100 text-green-700 border-green-200'
                                                                 : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
@@ -221,7 +221,7 @@ export default function Form({ period, location, assets, allLocations }) {
                                                     </button>
                                                     <button
                                                         onClick={() => updateRecord(asset.id, 'opname_status', asset.opname_status === 'hilang' ? null : 'hilang')}
-                                                        className={`px-2 py-1 rounded text-[11px] font-medium border transition ${
+                                                        className={`px-2.5 py-1 rounded text-xs font-medium border transition ${
                                                             asset.opname_status === 'hilang'
                                                                 ? 'bg-red-100 text-red-700 border-red-200'
                                                                 : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
@@ -232,7 +232,7 @@ export default function Form({ period, location, assets, allLocations }) {
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-3 py-2.5 align-top">
+                                        <td className="px-2 py-2.5 align-top w-[140px]">
                                             {isFrozen ? (
                                                 asset.opname_status === 'ada' ? (
                                                     <span className={`text-sm ${asset.opname_kondisi === 'Rusak' ? 'text-red-600' : 'text-gray-700'}`}>
@@ -256,7 +256,7 @@ export default function Form({ period, location, assets, allLocations }) {
                                                                         updateRecord(asset.id, 'opname_kondisi', e.target.value);
                                                                     }
                                                                 }}
-                                                                className={`w-full text-sm rounded-lg border-gray-200 focus:ring-indigo-500 focus:border-indigo-500 py-1.5 ${
+                                                                className={`w-full text-xs rounded-lg border-gray-200 focus:ring-[#b8860b] focus:border-[#b8860b] py-1.5 px-2 ${
                                                                     asset.opname_kondisi === 'Rusak' ? 'bg-red-50 text-red-700 border-red-200' : ''
                                                                 }`}
                                                             >
@@ -272,12 +272,12 @@ export default function Form({ period, location, assets, allLocations }) {
                                                                     onChange={(e) => updateLocal(asset.id, 'opname_kondisi', e.target.value)}
                                                                     onBlur={(e) => updateRecord(asset.id, 'opname_kondisi', e.target.value)}
                                                                     placeholder="Ketik kondisi..."
-                                                                    className="w-full text-sm rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 py-1.5"
+                                                                    className="w-full text-xs rounded-lg border-gray-300 focus:ring-[#b8860b] focus:border-[#b8860b] py-1.5 px-2"
                                                                     autoFocus
                                                                 />
                                                                 <button 
                                                                     onClick={() => updateRecord(asset.id, 'opname_kondisi', 'Bagus')}
-                                                                    className="text-gray-400 hover:text-red-500 p-1"
+                                                                    className="text-gray-400 hover:text-red-500 p-1 text-sm"
                                                                     title="Kembali ke pilihan"
                                                                 >
                                                                     &#10005;
@@ -302,9 +302,9 @@ export default function Form({ period, location, assets, allLocations }) {
                                                 </>
                                             )}
                                         </td>
-                                        <td className="px-3 py-2.5">
+                                        <td className="px-2 py-2.5 min-w-[140px]">
                                             {isFrozen ? (
-                                                <span className="text-xs text-gray-600">{asset.catatan || '-'}</span>
+                                                <span className="text-sm text-gray-600">{asset.catatan || '-'}</span>
                                             ) : (
                                                 <input 
                                                     type="text" 
@@ -312,7 +312,7 @@ export default function Form({ period, location, assets, allLocations }) {
                                                     onChange={(e) => updateLocal(asset.id, 'catatan', e.target.value)}
                                                     onBlur={(e) => updateRecord(asset.id, 'catatan', e.target.value)}
                                                     placeholder="..."
-                                                    className="w-full text-xs border-gray-200 rounded px-2 py-1 focus:ring-indigo-500 focus:border-indigo-500"
+                                                    className="w-full text-xs border-gray-200 rounded px-2 py-1.5 focus:ring-[#b8860b] focus:border-[#b8860b]"
                                                 />
                                             )}
                                         </td>

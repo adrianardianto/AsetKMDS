@@ -15,7 +15,7 @@ export default function Dashboard({ period, locations, totalAssets, totalChecked
             <div className="max-w-6xl mx-auto">
                 <div className="mb-8">
                     <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                        <Link href="/stock-opname" className="hover:text-indigo-600">Stock Opname</Link>
+                        <Link href="/stock-opname" className="hover:text-[#b8860b]">Stock Opname</Link>
                         <span>/</span>
                         <span>Dashboard</span>
                     </div>
@@ -137,8 +137,8 @@ export default function Dashboard({ period, locations, totalAssets, totalChecked
                     {locations.map((loc, index) => (
                         <div key={index} className={`p-5 rounded-xl border transition group ${isFrozen ? 'bg-white/80 border-blue-100 hover:border-blue-300 hover:shadow-md' : 'bg-white border-gray-200 hover:border-[#b8860b] hover:shadow-md'}`}>
                             <div className="flex justify-between items-start mb-3">
-                                <h4 className="font-bold text-gray-900 text-lg">{loc.name}</h4>
-                                <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded">
+                                <h4 className="font-bold text-[#b8860b] text-lg">{loc.name}</h4>
+                                <span className="bg-[#b8860b]/10 text-[#b8860b] text-xs px-2 py-1 rounded">
                                     {loc.total} Aset
                                 </span>
                             </div>
