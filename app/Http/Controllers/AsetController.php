@@ -39,7 +39,11 @@ class AsetController extends Controller
 
 
         if ($request->filled('kondisi')) {
-            $query->where('kondisi_aset', $request->kondisi);
+            if ($request->kondisi === 'Lainnya') {
+                $query->whereNotIn('kondisi_aset', ['Bagus', 'Rusak']);
+            } else {
+                $query->where('kondisi_aset', $request->kondisi);
+            }
         }
 
         $asets = $query->latest()->get();
@@ -126,8 +130,7 @@ class AsetController extends Controller
                     'waktu_pengerjaan' => $aset->waktu_pengerjaan,
                 ]);
             }
-            
-            // Sync changes to Active Stock Opname Periods
+        
             if (isset($changes['kondisi_aset'])) {
                 $newKondisi = $changes['kondisi_aset']['new'];
                 
@@ -135,7 +138,7 @@ class AsetController extends Controller
                 $activePeriodIds = \App\Models\StockOpnamePeriod::where('status', 'Aktif')->pluck('id');
                 
                 if ($activePeriodIds->isNotEmpty()) {
-                    // Update existing records for this asset in active periods
+                    // Update existing records
                     \App\Models\StockOpnameRecord::whereIn('stock_opname_period_id', $activePeriodIds)
                         ->where('aset_id', $aset->id)
                         ->update(['kondisi' => $newKondisi]);
@@ -153,7 +156,7 @@ class AsetController extends Controller
     {
         $query = Aset::query();
 
-        // Comprehensive Filtering
+        // filter
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -178,7 +181,11 @@ class AsetController extends Controller
 
 
         if ($request->filled('kondisi')) {
-            $query->where('kondisi_aset', $request->kondisi);
+            if ($request->kondisi === 'Lainnya') {
+                $query->whereNotIn('kondisi_aset', ['Bagus', 'Rusak']);
+            } else {
+                $query->where('kondisi_aset', $request->kondisi);
+            }
         }
 
         $asets = $query->latest()->get();

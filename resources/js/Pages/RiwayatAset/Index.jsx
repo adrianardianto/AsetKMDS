@@ -5,7 +5,7 @@ import MainLayout from '../../Layouts/MainLayout';
 export default function RiwayatAset({ riwayat, filters }) {
     const [expandedRows, setExpandedRows] = useState([]);
     
-    // Filter States
+    // Filter
     const [search, setSearch] = useState(filters.search || '');
     const [startDate, setStartDate] = useState(filters.start_date || '');
     const [endDate, setEndDate] = useState(filters.end_date || '');
@@ -205,7 +205,7 @@ export default function RiwayatAset({ riwayat, filters }) {
                                                         {log.action}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate group cursor-help" title={log.description}>
+                                                <td className="px-6 py-4 text-sm text-gray-500 max-w-[200px] truncate group cursor-help" title={log.description}>
                                                     {log.description}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

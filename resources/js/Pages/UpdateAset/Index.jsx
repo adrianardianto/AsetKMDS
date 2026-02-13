@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import MainLayout from '../../Layouts/MainLayout';
 
@@ -19,13 +19,25 @@ export default function UpdateAset({ asets, filters = {} }) {
         return `/update-aset/export?${params.toString()}`;
     };
 
-    const handleFilter = () => {
-        router.get(
-            '/update-aset',
-            { search, tipe, kategori, jenis, kondisi },
-            { preserveState: true, replace: true }
-        );
-    };
+    // Auto-filter
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            router.get(
+                '/update-aset',
+                { search, tipe, kategori, jenis, kondisi },
+                { preserveState: true, replace: true, preserveScroll: true }
+            );
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [search, tipe, kategori, jenis, kondisi]);
 
     const handleReset = () => {
         setSearch('');
@@ -238,7 +250,6 @@ export default function UpdateAset({ asets, filters = {} }) {
                                     className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-kmds-gold focus:border-kmds-gold w-full transition-shadow"
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleFilter()}
                                 />
                                 <svg className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -312,6 +323,7 @@ export default function UpdateAset({ asets, filters = {} }) {
                                     <option value="">Semua Kondisi</option>
                                     <option value="Bagus">Bagus</option>
                                     <option value="Rusak">Rusak</option>
+                                    <option value="Lainnya">Lainnya</option>
                                 </select>
                             </div>
 
@@ -325,12 +337,6 @@ export default function UpdateAset({ asets, filters = {} }) {
                                         Reset
                                     </button>
                                 )}
-                                <button 
-                                    onClick={handleFilter}
-                                    className="flex-1 bg-kmds-gold text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm shadow-yellow-200 hover:bg-yellow-600 transition-all hover:shadow-md active:scale-95"
-                                >
-                                    Filter
-                                </button>
                             </div>
                         </div>
                     </div>

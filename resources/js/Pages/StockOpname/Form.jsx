@@ -12,7 +12,12 @@ export default function Form({ period, location, assets, allLocations }) {
         opname_nama_user: a.opname_nama_user || a.nama_user || ''
     })));
     const [savingId, setSavingId] = useState(null);
-    const [filter, setFilter] = useState('all');
+    // Filter
+    const [search, setSearch] = useState('');
+    const [kategori, setKategori] = useState('');
+    const [keberadaan, setKeberadaan] = useState('');
+    const [kondisi, setKondisi] = useState('');
+    const [showFilters, setShowFilters] = useState(false);
 
     const updateRecord = async (id, field, value) => {
         if (isFrozen) return;
@@ -66,9 +71,33 @@ export default function Form({ period, location, assets, allLocations }) {
         setLocalAssets(newAssets);
     };
 
+    const handleReset = () => {
+        setSearch('');
+        setKategori('');
+        setKeberadaan('');
+        setKondisi('');
+    };
+
     const filteredAssets = localAssets.filter(asset => {
-        if (filter === 'all') return true;
-        return true;
+        const matchesSearch = search === '' || 
+            (asset.nama_aset && asset.nama_aset.toLowerCase().includes(search.toLowerCase())) ||
+            (asset.kode_aset && asset.kode_aset.toLowerCase().includes(search.toLowerCase())) ||
+            (asset.serial_number && asset.serial_number.toLowerCase().includes(search.toLowerCase())) ||
+            (asset.nama_user && asset.nama_user.toLowerCase().includes(search.toLowerCase()));
+
+        const matchesKategori = kategori === '' || asset.kategori_aset === kategori;
+        
+        const matchesKeberadaan = keberadaan === '' ? true :
+            keberadaan === 'Belum Dicek' 
+                ? (!asset.opname_status) 
+                : asset.opname_status === keberadaan;
+
+        const matchesKondisi = kondisi === ''            ? true
+            : kondisi === 'Lainnya'
+                ? (asset.kondisi_aset !== 'Bagus' && asset.kondisi_aset !== 'Rusak')
+                : asset.kondisi_aset === kondisi;
+
+        return matchesSearch && matchesKategori && matchesKeberadaan && matchesKondisi;
     });
 
     return (
@@ -79,9 +108,15 @@ export default function Form({ period, location, assets, allLocations }) {
                  {/* Header */}
                 <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                        <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                            <Link href={`/stock-opname/${period.id}`} className="hover:text-[#b8860b]">
-                                &larr; Kembali ke Dashboard
+                        <div className="mb-2">
+                            <Link 
+                                href={`/stock-opname/${period.id}`} 
+                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 bg-white border border-gray-200 hover:text-[#b8860b] hover:border-[#b8860b] hover:bg-[#b8860b]/5 transition-all shadow-sm"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                </svg>
+                                Kembali ke Dashboard
                             </Link>
                         </div>
                         <h1 className="text-xl font-bold text-gray-900">
@@ -101,6 +136,97 @@ export default function Form({ period, location, assets, allLocations }) {
                         )}
                         <div className="bg-[#b8860b]/10 text-[#b8860b] px-4 py-2 rounded-lg text-sm font-medium">
                             Total Aset: {localAssets.length}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Filter Section */}
+                <div className="mb-6 print:hidden">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 items-end">
+                        {/* Search keyword */}
+                        <div className="flex flex-col gap-1.5 sm:col-span-2 lg:col-span-1 xl:col-span-2">
+                             <div className="flex justify-between items-center lg:hidden mb-1">
+                                <label className="text-xs font-semibold text-gray-600 uppercase">Cari Aset</label>
+                                <button
+                                    onClick={() => setShowFilters(!showFilters)}
+                                    className="text-xs font-bold text-[#b8860b] hover:text-[#9a7009]"
+                                >
+                                    {showFilters ? 'Sembunyikan Filter' : 'Tampilkan Filter'}
+                                </button>
+                             </div>
+                             <label className="text-xs font-semibold text-gray-600 uppercase hidden lg:block">Cari Aset</label>
+                             
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Nama/Kode/SN/User"
+                                    className="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#b8860b] focus:border-[#b8860b] w-full transition-shadow"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                                <svg className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        {/* Collapsible Filters Container */}
+                        <div className={`contents ${showFilters ? 'block' : 'hidden'} lg:contents`}>
+                            {/* Kategori Filter */}
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-xs font-semibold text-gray-600 uppercase">Kategori</label>
+                                <select 
+                                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#b8860b] focus:border-[#b8860b] w-full"
+                                    value={kategori}
+                                    onChange={(e) => setKategori(e.target.value)}
+                                >
+                                    <option value="">Semua Kategori</option>
+                                    <option value="Elektronik">Elektronik</option>
+                                    <option value="Furniture">Furniture</option>
+                                    <option value="Kendaraan">Kendaraan</option>
+                                    <option value="Mesin">Mesin</option>
+                                </select>
+                            </div>
+
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-xs font-semibold text-gray-600 uppercase">Keberadaan</label>
+                                <select 
+                                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#b8860b] focus:border-[#b8860b] w-full"
+                                    value={keberadaan}
+                                    onChange={(e) => setKeberadaan(e.target.value)}
+                                >
+                                    <option value="">Semua Status</option>
+                                    <option value="ada">Ada</option>
+                                    <option value="hilang">Hilang</option>
+                                    <option value="Belum Dicek">Belum Dicek</option>
+                                </select>
+                            </div>
+
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-xs font-semibold text-gray-600 uppercase">Kondisi</label>
+                                <select 
+                                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#b8860b] focus:border-[#b8860b] w-full"
+                                    value={kondisi}
+                                    onChange={(e) => setKondisi(e.target.value)}
+                                >
+                                    <option value="">Semua Kondisi</option>
+                                    <option value="Bagus">Bagus</option>
+                                    <option value="Rusak">Rusak</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex gap-2">
+                                 {(search || kategori || keberadaan || kondisi) && (
+                                    <button 
+                                        onClick={handleReset}
+                                        className="flex-1 px-4 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                                    >
+                                        Reset
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>

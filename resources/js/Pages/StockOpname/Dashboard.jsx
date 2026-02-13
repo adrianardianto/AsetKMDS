@@ -6,6 +6,8 @@ export default function Dashboard({ period, locations, totalAssets, totalChecked
     const overallPercentage = totalAssets > 0 ? Math.round((totalChecked / totalAssets) * 100) : 0;
     const [showModal, setShowModal] = useState(false);
     const [confirmInput, setConfirmInput] = useState('');
+    const [showReopenModal, setShowReopenModal] = useState(false);
+    const [reopenConfirmInput, setReopenConfirmInput] = useState('');
     const isFrozen = period.status === 'Selesai';
 
     return (
@@ -14,10 +16,16 @@ export default function Dashboard({ period, locations, totalAssets, totalChecked
 
             <div className="max-w-6xl mx-auto">
                 <div className="mb-8">
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                        <Link href="/stock-opname" className="hover:text-[#b8860b]">Stock Opname</Link>
-                        <span>/</span>
-                        <span>Dashboard</span>
+                    <div className="mb-4">
+                        <Link 
+                            href="/stock-opname" 
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 bg-white border border-gray-200 hover:text-[#b8860b] hover:border-[#b8860b] hover:bg-[#b8860b]/5 transition-all shadow-sm"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Kembali ke Stock Opname
+                        </Link>
                     </div>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                         <div>
@@ -55,14 +63,12 @@ export default function Dashboard({ period, locations, totalAssets, totalChecked
                                 Selesaikan Periode SO
                             </button>
                         ) : (
-                            <Link 
-                                href={`/stock-opname/${period.id}/reopen`}
-                                method="post"
-                                as="button"
+                            <button 
+                                onClick={() => setShowReopenModal(true)}
                                 className="w-auto ml-auto md:ml-0 text-xs text-green-600 bg-white border border-green-200 px-3 py-1.5 rounded-lg hover:bg-green-50 hover:border-green-300 transition-colors shadow-sm font-medium"
                             >
                                 Aktifkan Kembali
-                            </Link>
+                            </button>
                         )}
                     </div>
                     
@@ -94,7 +100,7 @@ export default function Dashboard({ period, locations, totalAssets, totalChecked
                                     type="text" 
                                     value={confirmInput}
                                     onChange={(e) => setConfirmInput(e.target.value)}
-                                    className="w-full border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+                                    className="w-full border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 text-center"
                                     placeholder="SELESAI"
                                     autoFocus
                                 />
@@ -123,6 +129,59 @@ export default function Dashboard({ period, locations, totalAssets, totalChecked
                                     onClick={() => setShowModal(false)}
                                 >
                                     Selesaikan Periode
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {showReopenModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                        <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Konfirmasi Pengaktifan Kembali</h3>
+                            <p className="text-gray-500 text-sm mb-4">
+                                Apakah Anda yakin ingin mengaktifkan kembali periode stock opname ini? 
+                                <br/>
+                                <span className="text-green-600 font-medium">Data snapshot akan dihapus dan kembali real-time. Anda bisa melanjutkan stock opname.</span>
+                            </p>
+                            
+                            <div className="mb-4">
+                                <label className="block text-xs font-medium text-gray-700 mb-1">
+                                    Ketik <span className="font-mono font-bold text-green-600">"AKTIFKAN"</span> untuk melanjutkan
+                                </label>
+                                <input 
+                                    type="text" 
+                                    value={reopenConfirmInput}
+                                    onChange={(e) => setReopenConfirmInput(e.target.value)}
+                                    className="w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 text-center"
+                                    placeholder="AKTIFKAN"
+                                    autoFocus
+                                />
+                            </div>
+
+                            <div className="flex justify-end gap-3">
+                                <button 
+                                    onClick={() => {
+                                        setShowReopenModal(false);
+                                        setReopenConfirmInput('');
+                                    }}
+                                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                                >
+                                    Batal
+                                </button>
+                                <Link
+                                    href={`/stock-opname/${period.id}/reopen`}
+                                    method="post"
+                                    as="button"
+                                    disabled={reopenConfirmInput !== 'AKTIFKAN'}
+                                    className={`px-4 py-2 rounded-lg font-medium transition ${
+                                        reopenConfirmInput === 'AKTIFKAN'
+                                            ? 'bg-green-600 text-white hover:bg-green-700 shadow-md'
+                                            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    }`}
+                                    onClick={() => setShowReopenModal(false)}
+                                >
+                                    Aktifkan Kembali
                                 </Link>
                             </div>
                         </div>

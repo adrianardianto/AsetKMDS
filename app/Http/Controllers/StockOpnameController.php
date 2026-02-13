@@ -109,6 +109,7 @@ class StockOpnameController extends Controller
             // === FREEZE MODE: Data sepenuhnya dari snapshot records ===
             $records = StockOpnameRecord::where('stock_opname_period_id', $id)
                 ->where('snapshot_lokasi', $location)
+                ->with('aset')
                 ->get();
 
             $assets = $records->map(function ($record) {
@@ -126,10 +127,13 @@ class StockOpnameController extends Controller
                     'lokasi' => $record->is_snapshot_only ? $record->snapshot_lokasi : ($record->lokasi ?? $record->snapshot_lokasi),
                     'opname_lokasi' => $record->is_snapshot_only ? $record->snapshot_lokasi : ($record->lokasi ?? $record->snapshot_lokasi),
                     'opname_nama_user' => $record->is_snapshot_only ? $record->snapshot_nama_user : ($record->nama_user ?? $record->snapshot_nama_user),
+                    'tipe_aset' => $record->aset->tipe_aset ?? '-',
+                    'kategori_aset' => $record->aset->kategori_aset ?? '-',
+                    'jenis_aset' => $record->aset->jenis_aset ?? '-',
                 ];
             });
 
-            // Dalam freeze mode, lokasi juga dari snapshot (bukan master)
+            // Dalam freeze mode (bukan master)
             $allLocations = StockOpnameRecord::where('stock_opname_period_id', $id)
                 ->whereNotNull('snapshot_lokasi')
                 ->select('snapshot_lokasi')
@@ -159,6 +163,9 @@ class StockOpnameController extends Controller
                         'lokasi' => $aset->lokasi,
                         'opname_lokasi' => $record ? $record->lokasi : $aset->lokasi,
                         'opname_nama_user' => $record ? $record->nama_user : $aset->nama_user,
+                        'tipe_aset' => $aset->tipe_aset,
+                        'kategori_aset' => $aset->kategori_aset,
+                        'jenis_aset' => $aset->jenis_aset,
                     ];
                 });
 
