@@ -12,6 +12,7 @@ export default function Form({ period, location, assets, allLocations }) {
         opname_nama_user: a.opname_nama_user || a.nama_user || ''
     })));
     const [savingId, setSavingId] = useState(null);
+    const [editingKondisiId, setEditingKondisiId] = useState(null);
     // Filter
     const [search, setSearch] = useState('');
     const [kategori, setKategori] = useState('');
@@ -248,6 +249,31 @@ export default function Form({ period, location, assets, allLocations }) {
                 .print-visible {
                     display: none;
                 }
+                
+                /* Mobile Horizontal Scroll Styling */
+                .overflow-x-auto {
+                    -webkit-overflow-scrolling: touch;
+                    scrollbar-width: thin;
+                    scrollbar-color: #cbd5e0 #f7fafc;
+                }
+                
+                .overflow-x-auto::-webkit-scrollbar {
+                    height: 8px;
+                }
+                
+                .overflow-x-auto::-webkit-scrollbar-track {
+                    background: #f7fafc;
+                    border-radius: 4px;
+                }
+                
+                .overflow-x-auto::-webkit-scrollbar-thumb {
+                    background: #cbd5e0;
+                    border-radius: 4px;
+                }
+                
+                .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+                    background: #a0aec0;
+                }
             `}</style>
             <Head title={`Cek Lokasi: ${location}`} />
 
@@ -398,46 +424,59 @@ export default function Form({ period, location, assets, allLocations }) {
                     </div>
                 </div>
 
+
                 {/* Table Card */}
                 <div className={`bg-white rounded-xl shadow-sm border overflow-hidden ${isFrozen ? 'border-blue-200' : 'border-gray-200'} print:hidden`}>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                    <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+                        <table className="w-full text-left border-collapse table-fixed min-w-[1250px]">
+                            <colgroup>
+                                <col className="w-[50px]" />
+                                <col className="w-[140px]" />
+                                <col className="w-[200px]" />
+                                <col className="w-[110px]" />
+                                <col className="w-[100px]" />
+                                <col className="w-[130px]" />
+                                <col className="w-[140px]" />
+                                <col className="w-[110px]" />
+                                <col className="w-[150px]" />
+                                <col className="w-[120px]" />
+                            </colgroup>
                             <thead>
-                                <tr className={`border-b text-xs uppercase font-medium ${isFrozen ? 'bg-blue-50/50 border-blue-100 text-blue-600' : 'bg-gray-50 border-gray-200 text-gray-500'}`}>
-                                    <th className="px-2 py-2.5 w-[45px] text-center">No</th>
-                                    <th className="px-2 py-2.5 w-[130px]">Kode Aset</th>
-                                    <th className="px-2 py-2.5 w-[180px]">Nama Aset</th>
-                                    <th className="px-2 py-2.5 w-[110px] whitespace-nowrap">Serial Number</th>
-                                    <th className="px-2 py-2.5 w-[90px] whitespace-nowrap">Tgl Beli</th>
-                                    <th className="px-2 py-2.5 w-[120px]">User</th>
-                                    <th className="px-2 py-2.5 w-[150px]">Lokasi</th>
-                                    <th className="px-2 py-2.5 w-[130px] whitespace-nowrap">Keberadaan</th>
-                                    <th className="px-2 py-2.5 w-[140px] whitespace-nowrap">Kondisi Fisik</th>
-                                    <th className="px-2 py-2.5 min-w-[140px]">Catatan</th>
+                                <tr className={`border-b text-[11px] uppercase tracking-wider font-semibold ${isFrozen ? 'bg-blue-50/50 border-blue-100 text-blue-600' : 'bg-slate-50 border-slate-200 text-slate-500'}`}>
+                                    <th className="px-3 py-3 text-center whitespace-nowrap">No</th>
+                                    <th className="px-3 py-3 whitespace-nowrap">Kode Aset</th>
+                                    <th className="px-3 py-3">Nama Aset</th>
+                                    <th className="px-3 py-3 whitespace-nowrap">Serial Number</th>
+                                    <th className="px-3 py-3 whitespace-nowrap">Tgl Beli</th>
+                                    <th className="px-3 py-3 whitespace-nowrap">User</th>
+                                    <th className="px-3 py-3 whitespace-nowrap">Lokasi</th>
+                                    <th className="px-3 py-3 whitespace-nowrap">Keberadaan</th>
+                                    <th className="px-3 py-3 whitespace-nowrap">Kondisi Fisik</th>
+                                    <th className="px-3 py-3">Catatan</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {filteredAssets.map((asset, index) => (
                                     <tr key={asset.id} className={`transition ${isFrozen ? 'bg-gray-50/30' : 'hover:bg-gray-50'}`}>
-                                        <td className="px-2 py-2.5 align-top text-sm text-gray-500 text-center w-[45px]">
+                                        <td className="px-3 py-3.5 align-top text-sm text-slate-400 text-center whitespace-nowrap">
                                             {index + 1}
                                         </td>
-                                        <td className="px-2 py-2.5 align-top font-mono text-xs text-gray-600 w-[130px]">
+                                        <td className="px-3 py-3.5 align-top text-sm font-bold text-slate-800 whitespace-nowrap">
                                             {asset.kode_aset}
                                         </td>
-                                        <td className="px-2 py-2.5 align-top w-[180px]">
-                                            <div className="font-medium text-gray-900 text-sm leading-tight">{asset.nama_aset}</div>
+                                        <td className="px-3 py-3.5 align-top">
+                                            <div className="text-sm text-slate-700 leading-tight">{asset.nama_aset}</div>
                                             {savingId === asset.id && (
                                                 <span className="text-[10px] text-indigo-500 animate-pulse block">Saving...</span>
                                             )}
                                         </td>
-                                        <td className="px-2 py-2.5 align-top text-xs text-gray-600 font-mono w-[110px]">
+                                        <td className="px-3 py-3.5 align-top text-sm text-slate-600 whitespace-nowrap">
                                             {asset.serial_number || '-'}
                                         </td>
-                                        <td className="px-2 py-2.5 align-top text-xs text-gray-600 w-[90px]">
+                                        <td className="px-3 py-3.5 align-top text-sm text-slate-600 whitespace-nowrap">
                                             {asset.tanggal_beli ? new Date(asset.tanggal_beli).toLocaleDateString('id-ID') : '-'}
                                         </td>
-                                        <td className="px-2 py-2.5 align-top w-[120px]">
+                                        <td className="px-3 py-3.5 align-top">
                                             {isFrozen ? (
                                                 <div className="text-sm text-gray-700 py-0.5">
                                                     {asset.opname_nama_user || '-'}
@@ -446,11 +485,11 @@ export default function Form({ period, location, assets, allLocations }) {
                                                 <>
                                                     <input
                                                         type="text"
-                                                        value={asset.opname_nama_user}
+                                                        value={asset.opname_nama_user || ''}
                                                         onChange={(e) => updateLocal(asset.id, 'opname_nama_user', e.target.value)}
                                                         onBlur={(e) => updateRecord(asset.id, 'opname_nama_user', e.target.value)}
                                                         placeholder="..."
-                                                        className="w-full text-xs border-gray-200 rounded px-2 py-1.5 focus:ring-[#b8860b] focus:border-[#b8860b]"
+                                                        className="w-full h-9 text-xs border-slate-200 bg-slate-50 hover:bg-slate-100 rounded-lg px-3 focus:bg-white focus:ring-2 focus:ring-[#b8860b]/20 focus:border-[#b8860b] transition-all"
                                                     />
                                                     {asset.opname_nama_user && asset.opname_nama_user !== asset.nama_user && (
                                                         <div className="text-[10px] text-orange-500 mt-1">
@@ -460,7 +499,7 @@ export default function Form({ period, location, assets, allLocations }) {
                                                 </>
                                             )}
                                         </td>
-                                        <td className="px-2 py-2.5 align-top w-[150px]">
+                                        <td className="px-3 py-3.5 align-top">
                                             {isFrozen ? (
                                                 <div className="text-sm text-gray-700 py-0.5">
                                                     {asset.lokasi || '-'}
@@ -475,7 +514,7 @@ export default function Form({ period, location, assets, allLocations }) {
                                                     <select
                                                         value={asset.lokasi}
                                                         onChange={(e) => updateRecord(asset.id, 'lokasi', e.target.value)}
-                                                        className="w-full text-xs rounded border-gray-200 focus:ring-[#b8860b] focus:border-[#b8860b] py-1.5 px-2"
+                                                        className="w-full h-9 text-xs rounded-lg border-slate-200 bg-slate-50 hover:bg-slate-100 focus:bg-white focus:ring-2 focus:ring-[#b8860b]/20 focus:border-[#b8860b] px-3 transition-all cursor-pointer"
                                                     >
                                                         {allLocations.map((loc, idx) => (
                                                             <option key={idx} value={loc}>{loc}</option>
@@ -489,7 +528,7 @@ export default function Form({ period, location, assets, allLocations }) {
                                                 </>
                                             )}
                                         </td>
-                                        <td className="px-2 py-2.5 align-top w-[130px]">
+                                        <td className="px-3 py-3.5 align-top">
                                             {isFrozen ? (
                                                 <div className="flex gap-1.5">
                                                     {asset.opname_status === 'ada' ? (
@@ -525,7 +564,7 @@ export default function Form({ period, location, assets, allLocations }) {
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-2 py-2.5 align-top w-[140px]">
+                                        <td className="px-3 py-3.5 align-top">
                                             {isFrozen ? (
                                                 asset.opname_status === 'ada' ? (
                                                     <span className={`text-sm ${asset.opname_kondisi === 'Rusak' ? 'text-red-600' : 'text-gray-700'}`}>
@@ -539,17 +578,18 @@ export default function Form({ period, location, assets, allLocations }) {
                                             ) : (
                                                 <>
                                                     {asset.opname_status === 'ada' ? (
-                                                        ['Bagus', 'Rusak'].includes(asset.opname_kondisi) ? (
+                                                        ['Bagus', 'Rusak'].includes(asset.opname_kondisi) || !asset.opname_kondisi ? (
                                                             <select
-                                                                value={asset.opname_kondisi}
+                                                                value={asset.opname_kondisi || 'Bagus'}
                                                                 onChange={(e) => {
                                                                     if (e.target.value === 'Lainnya') {
                                                                         updateLocal(asset.id, 'opname_kondisi', '');
+                                                                        setEditingKondisiId(asset.id);
                                                                     } else {
                                                                         updateRecord(asset.id, 'opname_kondisi', e.target.value);
                                                                     }
                                                                 }}
-                                                                className={`w-full text-xs rounded-lg border-gray-200 focus:ring-[#b8860b] focus:border-[#b8860b] py-1.5 px-2 ${
+                                                                className={`w-full h-9 text-xs rounded-lg border-slate-200 bg-slate-50 hover:bg-slate-100 focus:bg-white focus:ring-2 focus:ring-[#b8860b]/20 focus:border-[#b8860b] px-3 transition-all cursor-pointer ${
                                                                     asset.opname_kondisi === 'Rusak' ? 'bg-red-50 text-red-700 border-red-200' : ''
                                                                 }`}
                                                             >
@@ -557,24 +597,61 @@ export default function Form({ period, location, assets, allLocations }) {
                                                                 <option value="Rusak">Rusak</option>
                                                                 <option value="Lainnya">Lainnya...</option>
                                                             </select>
-                                                        ) : (
+                                                        ) : editingKondisiId === asset.id ? (
                                                             <div className="flex gap-1 items-center">
                                                                 <input 
                                                                     type="text"
-                                                                    value={asset.opname_kondisi}
+                                                                    value={asset.opname_kondisi || ''}
                                                                     onChange={(e) => updateLocal(asset.id, 'opname_kondisi', e.target.value)}
-                                                                    onBlur={(e) => updateRecord(asset.id, 'opname_kondisi', e.target.value)}
+                                                                    onBlur={(e) => {
+                                                                        const value = e.target.value.trim();
+                                                                        const normalizedValue = value.toLowerCase() === 'bagus' ? 'Bagus' :
+                                                                                               value.toLowerCase() === 'rusak' ? 'Rusak' : 
+                                                                                               value;
+                                                                        console.log(`[KONDISI UPDATE] Original: "${value}", Normalized: "${normalizedValue}"`);
+                                                                        updateRecord(asset.id, 'opname_kondisi', normalizedValue || 'Bagus');
+                                                                        setEditingKondisiId(null);
+                                                                    }}
                                                                     placeholder="Ketik kondisi..."
-                                                                    className="w-full text-xs rounded-lg border-gray-300 focus:ring-[#b8860b] focus:border-[#b8860b] py-1.5 px-2"
+                                                                    className="w-full h-9 text-xs rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-[#b8860b]/20 focus:border-[#b8860b] px-3 transition-all"
                                                                     autoFocus
                                                                 />
                                                                 <button 
-                                                                    onClick={() => updateRecord(asset.id, 'opname_kondisi', 'Bagus')}
+                                                                    onClick={() => {
+                                                                        updateRecord(asset.id, 'opname_kondisi', 'Bagus');
+                                                                        setEditingKondisiId(null);
+                                                                    }}
                                                                     className="text-gray-400 hover:text-red-500 p-1 text-sm"
                                                                     title="Kembali ke pilihan"
                                                                 >
                                                                     &#10005;
                                                                 </button>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="group relative w-full">
+                                                                <div className="w-full h-9 flex items-center text-xs text-gray-700 px-3 border border-slate-200 bg-slate-50 rounded-lg whitespace-nowrap truncate" title={asset.opname_kondisi}>
+                                                                    {asset.opname_kondisi}
+                                                                </div>
+                                                                <div className="absolute right-1 top-1/2 -translate-y-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 px-1 rounded">
+                                                                    <button 
+                                                                        onClick={() => setEditingKondisiId(asset.id)}
+                                                                        className="text-gray-400 hover:text-[#b8860b] transition-colors p-0.5"
+                                                                        title="Edit kondisi"
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                                        </svg>
+                                                                    </button>
+                                                                    <button 
+                                                                        onClick={() => updateRecord(asset.id, 'opname_kondisi', 'Bagus')}
+                                                                        className="text-gray-400 hover:text-red-500 transition-colors p-0.5"
+                                                                        title="Kembali ke pilihan"
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         )
                                                     ) : asset.opname_status === 'hilang' ? (
@@ -595,17 +672,17 @@ export default function Form({ period, location, assets, allLocations }) {
                                                 </>
                                             )}
                                         </td>
-                                        <td className="px-2 py-2.5 min-w-[140px]">
+                                        <td className="px-3 py-3.5 align-top">
                                             {isFrozen ? (
                                                 <span className="text-sm text-gray-600">{asset.catatan || '-'}</span>
                                             ) : (
                                                 <input 
                                                     type="text" 
-                                                    value={asset.catatan}
+                                                    value={asset.catatan || ''}
                                                     onChange={(e) => updateLocal(asset.id, 'catatan', e.target.value)}
                                                     onBlur={(e) => updateRecord(asset.id, 'catatan', e.target.value)}
                                                     placeholder="..."
-                                                    className="w-full text-xs border-gray-200 rounded px-2 py-1.5 focus:ring-[#b8860b] focus:border-[#b8860b]"
+                                                    className="w-full h-9 text-xs border-slate-200 bg-slate-50 hover:bg-slate-100 rounded-lg px-3 focus:bg-white focus:ring-2 focus:ring-[#b8860b]/20 focus:border-[#b8860b] transition-all"
                                                 />
                                             )}
                                         </td>

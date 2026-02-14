@@ -90,7 +90,7 @@ export default function RiwayatAset({ riwayat, filters }) {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800">Riwayat Aset</h1>
-                        <p className="text-gray-500 mt-1">Log aktivitas perubahan data aset.</p>
+                        <p className="text-gray-500 mt-1">Setiap aktivitas perubahan data aset akan tercatat disini.</p>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-2">

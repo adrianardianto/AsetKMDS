@@ -133,10 +133,10 @@ export default function MainLayout({ children }) {
                         </div>
                     )}
 
-                    <span className="md:hidden flex items-center text-xs font-bold text-kmds-gold ml-1 tracking-tighter truncate flex-1">
+                    <span className="md:hidden flex items-center text-sm font-bold text-kmds-gold ml-1 tracking-tighter truncate flex-1">
                         {!isSidebarOpen ? (
                              <>
-                                <img src="/images/kmdslogo.png" alt="Logo" className="w-7 h-7 mr-1 object-contain" />
+                                <img src="/images/kmdslogo.png" alt="Logo" className="w-9 h-9 mr-2 object-contain" />
                                 Asset Management
                              </>
                         ) : ''}

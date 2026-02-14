@@ -206,7 +206,7 @@ export default function UpdateAset({ asets, filters = {} }) {
 
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 print:hidden">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-800">Data Aset</h1>
+                        <h1 className="text-2xl font-bold text-gray-800">Master Data Aset</h1>
                         <p className="text-gray-500 mt-1">Kelola dan update data aset yang telah tercatat.</p>
                     </div>
                     <div className="flex gap-2 print:hidden">
